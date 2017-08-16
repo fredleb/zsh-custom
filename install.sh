@@ -3,7 +3,7 @@
 now=`date +%Y%m%d%H%M%S`
 
 # Make backup copies from .zshrc
-cp $HOME/.zshrc $HOME/.zshrc.$now
+mv $HOME/.zshrc $HOME/.zshrc.$now
 
 
 ANTIGEN_DIR=~/.antigen
