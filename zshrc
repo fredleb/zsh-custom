@@ -23,6 +23,8 @@ antigen theme https://github.com/fredleb/zsh-custom.git themes/fidji
 # Tell antigen that you're done
 antigen apply
 
+# add our own ~/bin
+export PATH=~/bin:$PATH
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 COMPLETION_WAITING_DOTS="true"
