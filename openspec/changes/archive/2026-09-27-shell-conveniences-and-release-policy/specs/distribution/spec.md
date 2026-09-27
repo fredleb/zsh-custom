@@ -25,6 +25,17 @@ The project SHALL publish versioned releases using semantic versioning and git t
 - **WHEN** a merged change is breaking, adds or changes user-visible capability, or is only a fix, documentation, or internal change
 - **THEN** the version bump is respectively MAJOR, MINOR, or PATCH
 
+#### Scenario: The tag is actually created on merge
+
+- **WHEN** a merge to the main branch records a new version
+- **THEN** a git tag matching that version exists on the remote after the release automation runs
+- **AND** the release automation does not fail for a missing committer identity
+
+#### Scenario: A failed release is detectable
+
+- **WHEN** the release automation does not produce the tag for the merged version
+- **THEN** the missing tag is reported as a failure rather than left unnoticed
+
 ### Requirement: Continuous integration checks
 
 The project's continuous integration SHALL verify, for repository changes: shell script linting, zsh syntax correctness, absence of committed secrets, absence of privilege-escalation commands, that a fresh install starts without errors, that re-applying is idempotent, that the fresh-install and shell-start checks pass on both Linux and macOS, and that a change destined for the main branch carries a new version and a matching changelog entry.
