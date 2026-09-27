@@ -92,6 +92,32 @@ The project's continuous integration SHALL verify, for repository changes: shell
 - **WHEN** a change destined for the main branch does not carry a new version and changelog entry
 - **THEN** the version check fails and the change is blocked
 
+### Requirement: Human review and merge authority
+
+Continuous integration SHALL verify pull requests and report pass or fail, but
+merging into the main branch SHALL be performed by a human maintainer after
+review. Automation, including AI agents, MAY create branches, commit, push,
+open or update pull requests, and push further commits to make failing checks
+pass; it SHALL NOT merge a pull request, close it, or force-push over review
+without explicit human consent.
+
+#### Scenario: Passing checks do not trigger a merge
+
+- **WHEN** a pull request's required checks pass
+- **THEN** the pull request remains open for human review
+- **AND** no automation merges it
+
+#### Scenario: Maintainer merges after review
+
+- **WHEN** a human maintainer has reviewed a passing pull request and consents
+- **THEN** the human maintainer performs the merge
+
+#### Scenario: Automation may fix a failing check
+
+- **WHEN** a required check fails on a pull request
+- **THEN** automation may push further commits to make it pass
+- **AND** it still does not merge the pull request
+
 ### Requirement: User-facing documentation
 The README SHALL document installation, upgrading, customization, secrets handling, uninstallation, and supported platforms.
 
