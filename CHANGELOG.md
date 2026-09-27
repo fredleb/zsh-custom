@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.2] - 2026-09-27
+
+### Changed
+- Recorded the contribution rule that continuous integration verifies pull
+  requests but a human maintainer reviews and performs the merge; automation
+  and AI agents must not merge (or close, or force-push over review) without
+  explicit consent. Added `AGENTS.md` so agents follow the rule operationally.
+
 ## [3.2.1] - 2026-09-27
 
 ### Changed
