@@ -9,7 +9,11 @@ ci/
 openspec/
 .opencode/
 docs/
-# User-private files: never manage these even if they land in the source dir.
-secrets.zsh
+# User-private files: never manage these, wherever they appear.
+# Patterns match target paths.
 local.zsh
+secrets.zsh
 *.local.zsh
+.zshrc.local
+.config/zsh/local.zsh
+.config/zsh/secrets.zsh

@@ -1,6 +1,6 @@
 ## 1. chezmoi source tree
 
-- [ ] 1.1 Add `.chezmoiversion` (minimum `2.40.0`) and `.chezmoiignore` listing repo-only paths (`README.md`, `CHANGELOG.md`, `LICENSE`, `install.sh`, `.gitignore`, `ci/`, `.github/`, `openspec/`, `.opencode/`, `docs/`) and user-private patterns (`secrets.zsh`, `local.zsh`, `*.local.zsh`); verify `chezmoi managed` and `chezmoi ignored` agree with the intended set.
+- [ ] 1.1 Add `.chezmoiversion` (minimum `2.40.0`) and `.chezmoiignore` listing repo-only paths (`README.md`, `CHANGELOG.md`, `LICENSE`, `install.sh`, `.gitignore`, `ci/`, `.github/`, `openspec/`, `.opencode/`, `docs/`) and user-private patterns covering both root and the nested config paths (`local.zsh`, `secrets.zsh`, `*.local.zsh`, `.zshrc.local`, `.config/zsh/local.zsh`, `.config/zsh/secrets.zsh`); verify `chezmoi managed` and `chezmoi ignored` agree with the intended set.
 - [ ] 1.2 Add `dot_zshenv` (XDG variables and `~/.local/bin` on `PATH`); verify a sandbox apply creates `~/.zshenv` and `zsh -n` passes on it.
 - [ ] 1.3 Add `dot_zshrc` that sets `ZSH_CONFIG`/`ZSH_CACHE`, sources `$ZSH_CONFIG/conf.d/*.zsh` in lexical order, then `$ZSH_CONFIG/local.zsh`, then `$HOME/.zshrc.local`; verify a sandbox apply creates `~/.zshrc`, that `zsh -n` passes, and that a shell starts cleanly when no `conf.d` exists.
 
