@@ -11,6 +11,10 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   the XDG base-directory behavior, and the corresponding completed changes
   archived. No shell behavior change.
 
+### Fixed
+- The end-to-end CI check no longer fails intermittently on macOS when git's
+  detached background maintenance races the throwaway sandbox cleanup.
+
 ## [3.2.0] - 2026-09-27
 
 ### Added
