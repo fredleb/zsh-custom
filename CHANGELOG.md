@@ -4,6 +4,25 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2026-09-27
+
+### Added
+- Up/Down now walk the history entries that begin with the text typed at the
+  prompt, so typing `opens` then pressing Up recalls the most recent `opens…`
+  command and further presses walk older matches. A repeated command is shown
+  only once. On an empty prompt Up/Down keep the previous recall behaviour, and
+  in a multi-line edit they move the cursor. Bound for both the emacs and vi
+  editing modes (`dot_config/zsh/conf.d/06-keybindings.zsh`).
+
+### Changed
+- The shell no longer sets `XDG_CONFIG_HOME`, `XDG_CACHE_HOME`, or
+  `XDG_DATA_HOME` to their default values. Setting them is not neutral: a tool
+  that derives its home from an XDG variable when it is set (such as Debian's
+  nvm init, which pointed `NVM_DIR` at `~/.config/nvm`) could be redirected away
+  from its existing data and disappear from `PATH`. Set them yourself if you
+  want them; the framework still uses them when present. If a tool stops finding
+  its data, pin its home in `local.zsh` (see the README).
+
 ## [3.1.2] - 2026-09-27
 
 ### Fixed

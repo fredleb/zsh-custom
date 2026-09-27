@@ -46,6 +46,19 @@ chezmoi diff      # should show no drift
 zsh -i -c exit    # should print nothing
 ```
 
+## Tools whose data lives outside `~/.config`
+
+v3 does not set `XDG_CONFIG_HOME`, `XDG_CACHE_HOME`, or `XDG_DATA_HOME`. If
+your environment already sets one of them, a tool that derives its home from it
+can be redirected. Debian's nvm init sets `NVM_DIR="$XDG_CONFIG_HOME/nvm"`, so
+nvm can stop finding versions installed under `~/.nvm`. Pin it in
+`~/.config/zsh/local.zsh` before nvm is sourced:
+
+```sh
+export NVM_DIR="$HOME/.nvm"
+source /usr/share/nvm/init-nvm.sh
+```
+
 ## Rollback to v2
 
 Check out the `v2.0.1` tag in the old clone and re-run its `install.sh` (the
