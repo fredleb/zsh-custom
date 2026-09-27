@@ -1,0 +1,2 @@
+# Loaded last so syntax highlighting wraps the finished command line.
+zsh-users/zsh-syntax-highlighting
