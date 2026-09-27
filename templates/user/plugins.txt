@@ -1,9 +1,0 @@
-# Extra antidote plugins for this user.
-#
-# One spec per line (see https://getantidote.github.io). Loaded AFTER the
-# framework defaults and BEFORE syntax highlighting, so plugins you add here
-# will not break highlight order.
-#
-# Examples:
-#   zsh-users/zsh-history-substring-search
-#   zsh-users/zsh-completions

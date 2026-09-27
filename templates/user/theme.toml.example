@@ -1,7 +1,0 @@
-# Optional Starship prompt override.
-#
-# To customize the prompt without touching the framework, copy this file to
-#     ~/.config/zsh-custom/theme.toml
-# and edit it. Start from the framework default at <repo>/starship.toml.
-#
-# This example file is NOT loaded automatically (only `theme.toml` is).

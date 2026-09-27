@@ -23,8 +23,8 @@
 
 ## 5. Remove the v2 framework
 
-- [ ] 5.1 Confirm new paths carry all v2 content (`dot_config/starship.toml`, the three plugin lists, and the completion fragment exist) before deleting anything; verify the guard check passes and does not proceed otherwise.
-- [ ] 5.2 Delete `init.zsh`, `bin/`, `lib/`, root `conf.d/`, `templates/`, `VERSION`, `zsh_plugins.txt`, `zsh_plugins.git.txt`, `zsh_plugins.last.txt`, and `starship.toml`; update `.gitignore`; verify `git ls-files` lists only the new layout and the end-to-end test still passes.
+- [x] 5.1 Confirm new paths carry all v2 content (`dot_config/starship.toml`, the three plugin lists, and the completion fragment exist) before deleting anything; verify the guard check passes and does not proceed otherwise.
+- [x] 5.2 Delete `init.zsh`, `bin/`, `lib/`, root `conf.d/`, `templates/`, `VERSION`, `zsh_plugins.txt`, `zsh_plugins.git.txt`, `zsh_plugins.last.txt`, and `starship.toml`; update `.gitignore`; verify `git ls-files` lists only the new layout and the end-to-end test still passes.
 
 ## 6. Continuous integration
 
