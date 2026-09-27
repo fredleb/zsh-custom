@@ -13,5 +13,12 @@ done
 unset _zsc_f
 
 # User escape hatches, always last.
-[[ -r "$ZSH_CONFIG/local.zsh" ]] && source "$ZSH_CONFIG/local.zsh"
-[[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+if [[ -r "$ZSH_CONFIG/local.zsh" ]]; then
+  source "$ZSH_CONFIG/local.zsh"
+fi
+if [[ -r "$HOME/.zshrc.local" ]]; then
+  source "$HOME/.zshrc.local"
+fi
+
+# Always leave a successful status for scripted/`zsh -c` use.
+true
