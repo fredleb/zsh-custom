@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.2] - 2026-09-27
+
+### Fixed
+- The release workflow now publishes a **GitHub Release**, not only a git tag.
+  A tag alone does not appear on the repository's releases page, which is why
+  `v3.1.1` was tagged but showed no new release. Release notes are taken from the
+  changelog section for that version.
+
 ## [3.1.1] - 2026-09-27
 
 ### Fixed
