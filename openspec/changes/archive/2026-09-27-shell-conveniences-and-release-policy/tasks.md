@@ -18,6 +18,7 @@
 - [x] 3.2 Add a CI job that runs the check for pull requests against `main` and fails the change when the version is not increased or the heading cannot be parsed
 - [x] 3.3 Add a workflow that runs on push to `main` and creates the tag `v<top-changelog-version>` when it does not exist, verify a re-run creates no duplicate tag, grant it `contents: write`, and document the branch-protection requirement
 - [x] 3.4 Bump the version and add a `CHANGELOG.md` entry for this change, and verify `ci/check-version.sh` passes against `main`
+- [x] 3.5 Fix the release workflow so tagging succeeds on a CI runner with no git identity (it failed with "empty ident name"), and verify an annotated tag is created in a repository with no configured identity
 
 ## 4. Documentation
 

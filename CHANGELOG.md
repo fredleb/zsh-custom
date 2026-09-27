@@ -4,6 +4,14 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.1] - 2026-09-27
+
+### Fixed
+- The release workflow now creates the version tag. Tagging failed on the CI
+  runner with "empty ident name" because an annotated tag needs a committer
+  identity; the workflow now sets the GitHub Actions bot identity. As a result
+  `v3.1.0` was recorded in the changelog but never tagged.
+
 ## [3.1.0] - 2026-09-27
 
 ### Added
