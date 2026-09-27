@@ -29,6 +29,7 @@
 - [x] 4.3 Add user plugin-list extension loading; verify a plugin added to the user list loads without editing framework files.
 - [x] 4.4 Make plugin loading fail-soft; verify the shell starts and warns when a plugin path is unreachable.
 - [x] 4.5 Add cached plugin resolution plus a refresh command; verify the second shell start does not re-resolve and refresh picks up a change.
+- [x] 4.6 Restore the interactive completion menu (selectable list, arrow-key navigation, highlighting) that the previous oh-my-zsh configuration provided; verify the option, style, and module state matches oh-my-zsh's `lib/completion.zsh`.
 
 ## 5. Prompt
 
