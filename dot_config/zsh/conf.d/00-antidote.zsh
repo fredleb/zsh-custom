@@ -60,10 +60,12 @@ unset _zsc_antidote
 # Stage 1: completions + autosuggestions (before compinit).
 zshrc_antidote_bundle_load "$ZSH_CONFIG/plugins.txt"
 
-# compinit once.
+# compinit once. Use -i so insecure completion dirs are ignored silently:
+# plain compinit prompts about them, which aborts in non-interactive shells
+# (e.g. `zsh -i -c ...`).
 if ! (( $+functions[compdef] )); then
   autoload -Uz compinit
-  compinit
+  compinit -i
 fi
 
 # Stage 2: plugins that call compdef at source time.
