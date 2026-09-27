@@ -57,6 +57,6 @@
 
 ## 9. Release and documentation
 
-- [x] 9.1 Rewrite the README (install, upgrade, customize, secrets, uninstall, supported platforms, version pinning); verify a fresh user can follow it end to end.
+- [ ] 9.1 Rewrite the README (install, upgrade, customize, secrets, uninstall, supported platforms, version pinning); verify a fresh user can follow it end to end. (Reopened: the upgrade instructions were incorrect — missing PATH context, a non-existent example version, and no pre-v2 upgrade path. Fixed on `docs/fix-readme-install-upgrade`.)
 - [x] 9.2 Add `CHANGELOG.md` and release `v2.0.0` with breaking-change and migration notes; verify the tag exists and the changelog documents the one-time migration.
 - [x] 9.3 Verify rollback by checking out the previous tag and confirming the shell starts without changing `~/.zshrc`.
