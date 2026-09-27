@@ -55,7 +55,7 @@ else
     fail "chezmoi apply failed in the sandbox"
   else
     out="$(
-      zsh -i -c '
+      TERM=xterm zsh -i -c '
         for a in l ll la lsa; do
           [[ -n ${aliases[$a]} ]] || print -r -- "missing alias: $a"
         done
@@ -71,6 +71,25 @@ else
         [[ $(bindkey -M viins "^[OA") == *up-line-or-beginning-search* ]]   || print -r -- "viins Up (application mode) is not prefix history search"
         [[ $(bindkey -M viins "^[[B") == *down-line-or-beginning-search* ]] || print -r -- "viins Down is not prefix history search"
         [[ $(bindkey -M viins "^[OB") == *down-line-or-beginning-search* ]] || print -r -- "viins Down (application mode) is not prefix history search"
+
+        # Terminal navigation keys resolve to their widgets in every keymap.
+        nav_check() {
+          local km=$1 key=$2 want=$3 got
+          got=$(bindkey -M $km "$key"); got=${got##* }
+          [[ $got == $want ]] || print -r -- "navigation: $km $key -> $got (want $want)"
+        }
+        nav_check emacs "^[[3~" delete-char
+        nav_check viins "^[[3~" delete-char
+        nav_check vicmd "^[[3~" vi-delete-char
+        for km in emacs viins vicmd; do
+          nav_check $km "^[[H"  beginning-of-line
+          nav_check $km "^[[F"  end-of-line
+          nav_check $km "^[[5~" up-line
+          nav_check $km "^[[6~" down-line
+        done
+        for km in emacs viins; do
+          nav_check $km "^[[2~" overwrite-mode
+        done
       ' 2>/dev/null
     )"
     if [[ -n "$out" ]]; then
