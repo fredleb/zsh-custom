@@ -1,8 +1,0 @@
-# zsh-custom default plugins — stage 2 (loaded after compinit).
-#
-# These use compdef at source time, so they must load after compinit has run.
-# We source only oh-my-zsh's git library file and the git plugin — not the
-# full oh-my-zsh library.
-
-ohmyzsh/ohmyzsh path:lib/git.zsh
-ohmyzsh/ohmyzsh path:plugins/git

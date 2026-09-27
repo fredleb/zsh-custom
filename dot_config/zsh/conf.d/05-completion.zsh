@@ -4,7 +4,7 @@
 # config) applies the same ones in its lib/completion.zsh. Without them the
 # completion list has no selectable menu and no highlighting.
 #
-# Override any of this in $ZSHRC_CUSTOM/conf.d/ or local.zsh (loaded later).
+# Override any of this in ~/.config/zsh/local.zsh (sourced last).
 
 # The complist module provides the selectable menu.
 zmodload -i zsh/complist
@@ -34,8 +34,8 @@ zstyle ':completion:*' special-dirs true
 
 # Cache expensive completions.
 zstyle ':completion:*' use-cache yes
-zstyle ':completion:*' cache-path "${ZSHRC_CUSTOM_CACHE}/zcompcache"
-[[ -d ${ZSHRC_CUSTOM_CACHE}/zcompcache ]] || mkdir -p -- "${ZSHRC_CUSTOM_CACHE}/zcompcache" 2>/dev/null
+zstyle ':completion:*' cache-path "$ZSH_CACHE/zcompcache"
+[[ -d $ZSH_CACHE/zcompcache ]] || mkdir -p -- "$ZSH_CACHE/zcompcache" 2>/dev/null
 
 # Don't offer uninteresting system users.
 zstyle ':completion:*:*:*:users' ignored-patterns \

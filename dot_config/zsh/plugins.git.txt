@@ -1,0 +1,3 @@
+# Stage 2 (loaded after compinit, because these call compdef at source time).
+ohmyzsh/ohmyzsh path:lib/git.zsh
+ohmyzsh/ohmyzsh path:plugins/git

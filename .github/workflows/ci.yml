@@ -6,12 +6,8 @@ on:
 
 jobs:
   lint:
-    name: lint (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
+    name: lint
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Install tools
@@ -19,11 +15,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y shellcheck zsh
       - name: shellcheck (bash)
-        run: shellcheck install.sh bin/zsh-custom lib/*.sh ci/*.sh
+        run: shellcheck install.sh ci/*.sh run_once_before_*.sh
       - name: zsh syntax check
         run: |
-          find . -name '*.zsh' -not -path './.git/*' -print0 \
-            | xargs -0 -r -n1 zsh -n
+          find . -name '*.zsh' -not -path './.git/*' -print0 | xargs -0 -r -n1 zsh -n
 
   hygiene:
     name: hygiene
@@ -44,38 +39,21 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
-      - name: Provision system dependencies
+      - name: Install chezmoi
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Install antidote and starship
         run: |
           if [ "$(uname -s)" = "Darwin" ]; then
-            brew install starship
-            ANTIDOTE_DIR=/usr/local/share/zsh-antidote
+            brew install antidote starship
           else
             sudo apt-get update
-            sudo apt-get install -y zsh git
-            mkdir -p "$HOME/.local/bin"
-            curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin"
-            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-            ANTIDOTE_DIR=/usr/share/zsh-antidote
+            sudo apt-get install -y zsh git curl
+            sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- -y -b "$HOME/.local/bin"
+            git clone --depth=1 https://github.com/mattmc3/antidote.git "$HOME/.antidote"
+            echo "ZSHRC_ANTIDOTE_PATH=$HOME/.antidote/antidote.zsh" >> "$GITHUB_ENV"
           fi
-          sudo mkdir -p "$ANTIDOTE_DIR"
-          sudo git clone --depth=1 https://github.com/mattmc3/antidote.git "$ANTIDOTE_DIR"
-      - name: Fresh install in a sandbox HOME
-        run: |
-          export HOME="$RUNNER_TEMP/fakehome"
-          mkdir -p "$HOME"
-          printf '# my own line\nexport USER_LINE=1\n' > "$HOME/.zshrc"
-          ./install.sh -y
-          grep -q 'zsh-custom (managed)' "$HOME/.zshrc"
-          grep -q 'export USER_LINE=1' "$HOME/.zshrc"
-      - name: Headless shell starts without zsh-custom errors
-        run: |
-          export HOME="$RUNNER_TEMP/fakehome"
-          zsh -i -c 'exit' 2>&1 | tee "$RUNNER_TEMP/out.txt" || true
-          ! grep -q 'zsh-custom:' "$RUNNER_TEMP/out.txt"
-          ! grep -q 'command not found: antigen' "$RUNNER_TEMP/out.txt"
-      - name: Install is idempotent
-        run: |
-          export HOME="$RUNNER_TEMP/fakehome"
-          cp "$HOME/.zshrc" "$RUNNER_TEMP/before"
-          ./install.sh -y
-          cmp "$RUNNER_TEMP/before" "$HOME/.zshrc"
+      - name: End-to-end install
+        run: bash ci/test-install.sh
