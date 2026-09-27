@@ -38,6 +38,7 @@
 - [x] 5.3 Configure a readable no-Nerd-Font fallback and document the font requirement; verify the prompt renders readably with icons disabled.
 - [x] 5.4 Remove the custom theme file and its references; verify no file references `themes/fidji.zsh-theme`.
 - [x] 5.5 Allow prompt config override from the user layer; verify a user override wins over the default.
+- [x] 5.6 Fix prompt color and spacing regressions: host, time, runtime, and git use the terminal default foreground; the host is blue only for remote sessions; the double space after the prompt character is removed.
 
 ## 6. User customization layer
 
