@@ -1,8 +1,9 @@
 name: Release
 
-# Every merge to main is a release: tag the version recorded in CHANGELOG.md.
-# Runs on push (including a merge) rather than on the pull request, so release
-# credentials never reach pull-request code.
+# Every merge to main is a release. This creates both the git tag and the
+# GitHub Release (the repo's Releases page shows Releases, not tags, so a tag
+# alone does not surface a new version). Runs on push rather than on the pull
+# request, so release credentials never reach pull-request code.
 on:
   push:
     branches: [main, master]
@@ -11,15 +12,15 @@ permissions:
   contents: write
 
 jobs:
-  tag:
-    name: tag
+  release:
+    name: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Read the version from CHANGELOG.md
+      - name: Read the version and its changelog section
         id: version
         run: |
           version="$(grep -m1 -E '^## \[[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md \
@@ -29,6 +30,18 @@ jobs:
             exit 1
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
+
+          # Release notes: the body of this version's section, up to the next
+          # '## [' heading. Fail loudly rather than publish empty notes.
+          awk -v v="$version" '
+            $0 ~ "^## \\[" v "\\]" { in_section=1; next }
+            in_section && /^## \[/   { exit }
+            in_section               { print }
+          ' CHANGELOG.md > release-notes.md
+          if ! grep -q '[^[:space:]]' release-notes.md; then
+            echo "changelog section for $version is empty" >&2
+            exit 1
+          fi
 
       - name: Create the tag if it does not exist
         env:
@@ -46,3 +59,19 @@ jobs:
           git tag --annotate "${tag}" --message "Release ${tag}"
           git push origin "${tag}"
           echo "created tag ${tag}"
+
+      - name: Create or update the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          tag="v${VERSION}"
+          if gh release view "${tag}" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "release ${tag} already exists; updating notes"
+            gh release edit "${tag}" --repo "$GITHUB_REPOSITORY" \
+              --title "${tag}" --notes-file release-notes.md
+          else
+            gh release create "${tag}" --repo "$GITHUB_REPOSITORY" \
+              --title "${tag}" --notes-file release-notes.md
+            echo "created GitHub Release ${tag}"
+          fi

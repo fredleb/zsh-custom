@@ -7,7 +7,7 @@ Defines the practices that make the public, shared distribution safe and predict
 
 ### Requirement: Versioned releases
 
-The project SHALL publish versioned releases using semantic versioning and git tags on the chezmoi source. Every merge to the main branch SHALL be a release: it SHALL increment the version, record that version and its changes in the changelog, and produce a git tag matching the version, so the version on the main branch always identifies the latest merged state. The increment SHALL be MAJOR for a breaking change, MINOR for a new or changed user-visible capability, and PATCH for a fix, documentation, or internal change. The checked-out release SHALL be discoverable from the source checkout, and users SHALL be able to pin or roll back by checking out a released tag in the source directory and re-applying.
+The project SHALL publish versioned releases using semantic versioning. Every merge to the main branch SHALL be a release: it SHALL increment the version, record that version and its changes in the changelog, and produce both a git tag matching the version and a published release entry visible on the repository's releases page, so the version on the main branch always identifies the latest merged state. The increment SHALL be MAJOR for a breaking change, MINOR for a new or changed user-visible capability, and PATCH for a fix, documentation, or internal change. The checked-out release SHALL be discoverable from the source checkout, and users SHALL be able to pin or roll back by checking out a released tag in the source directory and re-applying.
 
 #### Scenario: Runtime version report
 
@@ -36,10 +36,17 @@ The project SHALL publish versioned releases using semantic versioning and git t
 - **THEN** a git tag matching that version exists on the remote after the release automation runs
 - **AND** the release automation does not fail for a missing committer identity
 
+#### Scenario: The release is visible on the repository
+
+- **WHEN** a merge to the main branch records a new version
+- **THEN** a published release for that version exists and is visible on the repository's releases page
+- **AND** its notes are taken from the changelog section for that version
+- **AND** a git tag alone, without a published release, does not satisfy this requirement
+
 #### Scenario: A failed release is detectable
 
-- **WHEN** the release automation does not produce the tag for the merged version
-- **THEN** the missing tag is reported as a failure rather than left unnoticed
+- **WHEN** the release automation does not produce the tag or the published release for the merged version
+- **THEN** the missing release is reported as a failure rather than left unnoticed
 
 ### Requirement: Changelog
 The project SHALL maintain a changelog that records user-visible changes for each release, including breaking changes and required user actions.
