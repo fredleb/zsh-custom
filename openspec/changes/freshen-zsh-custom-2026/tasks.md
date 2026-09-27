@@ -29,6 +29,7 @@
 - [x] 4.3 Add user plugin-list extension loading; verify a plugin added to the user list loads without editing framework files.
 - [x] 4.4 Make plugin loading fail-soft; verify the shell starts and warns when a plugin path is unreachable.
 - [x] 4.5 Add cached plugin resolution plus a refresh command; verify the second shell start does not re-resolve and refresh picks up a change.
+- [x] 4.6 Restore the interactive completion menu (selectable list, arrow-key navigation, highlighting) that the previous oh-my-zsh configuration provided; verify the option, style, and module state matches oh-my-zsh's `lib/completion.zsh`.
 
 ## 5. Prompt
 
@@ -37,6 +38,7 @@
 - [x] 5.3 Configure a readable no-Nerd-Font fallback and document the font requirement; verify the prompt renders readably with icons disabled.
 - [x] 5.4 Remove the custom theme file and its references; verify no file references `themes/fidji.zsh-theme`.
 - [x] 5.5 Allow prompt config override from the user layer; verify a user override wins over the default.
+- [x] 5.6 Fix prompt color and spacing regressions: host, time, runtime, and git use the terminal default foreground; the host is blue only for remote sessions; the double space after the prompt character is removed.
 
 ## 6. User customization layer
 

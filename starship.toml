@@ -1,15 +1,20 @@
 # zsh-custom default prompt — font-free (no Nerd Font required).
-# Plain Unicode glyphs only: ⬡ ± ▴ ▾ ● ↵ ≡
-# Users can copy this to $ZSHRC_CUSTOM/theme.toml and edit it there.
+#
+# Colors: the host, time, runtime and git elements use the terminal's default
+# foreground so they stay readable on any background. Only the host name is
+# colored, and only for remote (SSH) sessions. This matches the previous theme,
+# which used the default foreground for those elements and blue for remote hosts.
+#
+# Users can override any of this in $ZSHRC_CUSTOM/theme.toml.
 
 add_newline = true
 
 # Line 1: user@host  path ............ time
 # Line 2: status + character   ......... node + git (right-aligned)
 format = """
-$username$hostname $directory$fill$time
+$username${custom.host_local}$hostname$directory$fill$time
 $status$character """
-right_format = "$custom$git_branch$git_status"
+right_format = "${custom.zsc_node}$git_branch$git_status"
 
 [username]
 show_always = true
@@ -17,10 +22,18 @@ style_user = "bold white"
 style_root = "bold red"
 format = "[$user]($style)@"
 
+# Remote sessions: built-in hostname shows in blue.
 [hostname]
-ssh_only = false
-style = "bold white"
+ssh_only = true
+style = "bold blue"
 format = "[$hostname]($style) "
+
+# Local sessions: default foreground, not white.
+[custom.host_local]
+command = "hostname -s"
+when = '[ -z "$SSH_CONNECTION" ]'
+style = "none"
+format = "[$output]($style) "
 
 [directory]
 style = "bold white"
@@ -30,7 +43,7 @@ format = "[$path]($style) "
 
 [time]
 disabled = false
-style = "white"
+style = "none"
 time_format = "%T"
 format = "\\[[$time]($style)\\] "
 
@@ -43,25 +56,26 @@ style = "red"
 symbol = "↵ "
 format = "[$symbol$status]($style) "
 
+# No trailing space here: the format line above already adds one.
 [character]
 success_symbol = "[\\$](green)"
 error_symbol = "[\\$](red)"
+format = "[$symbol]($style)"
 
 [custom.zsc_node]
-# Always-on Node indicator (matches the previous theme's nvm prompt).
 command = "node --version 2>/dev/null"
 when = "command -v node >/dev/null 2>&1"
 symbol = "⬡ "
-style = "bold white"
+style = "none"
 format = "[$symbol$output]($style) "
 
 [git_branch]
 symbol = "±"
-style = "bold white"
+style = "none"
 format = "\\[[$symbol$branch]($style) "
 
 [git_status]
-style = "bold white"
+style = "none"
 format = "[$all_status$ahead_behind]($style)\\] "
 stashed = "≡"
 ahead = "▴"
