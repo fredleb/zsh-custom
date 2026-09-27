@@ -1,102 +1,72 @@
 #!/usr/bin/env bash
-# zsh-custom installer.
+# Bootstrap zsh-custom via chezmoi.
 #
-# Non-destructive: injects a version-invariant managed block into ~/.zshrc,
-# seeds a user customization layer, and never overwrites user files.
-# It does NOT install system packages and never invokes privilege escalation.
+# Verifies system prerequisites (chezmoi, antidote, starship) and applies this
+# repository with chezmoi. It NEVER installs packages and NEVER escalates
+# privileges: when something is missing it prints the command for the user.
 set -euo pipefail
 
-REPO_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-# shellcheck source=lib/common.sh
-. "$REPO_DIR/lib/common.sh"
-# shellcheck source=lib/migrate.sh
-. "$REPO_DIR/lib/migrate.sh"
+repo="${ZSHRC_REPO:-fredleb/zsh-custom}"
 
-RC="${ZSHRC_CUSTOM_RC:-$HOME/.zshrc}"
-
-usage() {
-  cat <<EOF
-Usage: install.sh [options]
-
-Injects the zsh-custom managed block into ${RC} and seeds the user layer.
-
-Options:
-  -y, --yes     non-interactive (accepted for automation; installer never prompts)
-  -h, --help    show this help
-EOF
+pkg_manager() {
+  if command -v brew >/dev/null 2>&1; then echo brew
+  elif command -v pacman >/dev/null 2>&1; then echo pacman
+  elif command -v apt-get >/dev/null 2>&1; then echo apt
+  elif command -v dnf >/dev/null 2>&1; then echo dnf
+  else echo unknown; fi
 }
 
-main() {
-  while (($#)); do
-    case "$1" in
-      -y|--yes) ;;
-      -h|--help) usage; return 0 ;;
-      *) zshc_die "unknown option: $1 (try --help)" ;;
-    esac
-    shift
+# Print the command a USER should run. This script never runs it.
+dep_hint() {
+  local dep=$1 mgr; mgr="$(pkg_manager)"
+  case "${mgr}:${dep}" in
+    brew:chezmoi)    echo "brew install chezmoi";;
+    brew:antidote)   echo "brew install antidote";;
+    brew:starship)   echo "brew install starship";;
+    pacman:chezmoi)  echo "sudo pacman -S chezmoi";;
+    pacman:antidote) echo "yay -S zsh-antidote   # or another AUR helper";;
+    pacman:starship) echo "sudo pacman -S starship";;
+    apt:chezmoi)     echo "sudo apt-get install chezmoi";;
+    apt:antidote)    echo "sudo apt-get install zsh-antidote";;
+    apt:starship)    echo "sudo apt-get install starship";;
+    dnf:chezmoi)     echo "sudo dnf install chezmoi";;
+    dnf:antidote)    echo "install antidote from source or your distribution";;
+    dnf:starship)    echo "sudo dnf install starship";;
+    *)               echo "install '$dep' with your system package manager";;
+  esac
+}
+
+# antidote is a sourced zsh script, not a command on PATH.
+antidote_found() {
+  [[ -n ${ZSHRC_ANTIDOTE_PATH:-} && -r ${ZSHRC_ANTIDOTE_PATH:-} ]] && return 0
+  local c
+  for c in /usr/share/zsh-antidote/antidote.zsh \
+           /usr/local/share/zsh-antidote/antidote.zsh \
+           /usr/share/zsh/plugins/antidote/antidote.zsh; do
+    [[ -r $c ]] && return 0
   done
-
-  zshc_log "zsh-custom installer (framework $("$REPO_DIR/bin/zsh-custom" version 2>/dev/null || cat "$REPO_DIR/VERSION"))"
-  zshc_log "  repo: ${REPO_DIR}"
-
-  # 1. System prerequisites. Never installs anything, never escalates.
-  if ! zshc_check_prereqs; then
-    zshc_err "missing system prerequisites; nothing was changed."
-    return 1
+  if command -v brew >/dev/null 2>&1; then
+    [[ -r "$(brew --prefix 2>/dev/null)/opt/antidote/share/antidote/antidote.zsh" ]] && return 0
   fi
-
-  # 2. Back up the existing rc BEFORE touching anything.
-  local backup=""
-  if [[ -f $RC ]]; then
-    backup="$(mktemp -t zshrc-backup.XXXXXX)"
-    cp -p "$RC" "$backup"
-    zshc_log "  backed up ${RC} -> ${backup}"
-    zshc_warn "old backups may contain secrets; review and remove any credentials from them"
-  fi
-
-  # 3. Migrate a legacy configuration (non-destructive).
-  local mrc=0
-  zshc_migrate_rc "$RC" || mrc=$?
-  if (( mrc == 2 )); then
-    zshc_err "migration refused; ${RC} was left unchanged."
-    return 1
-  fi
-  if (( mrc != 0 )); then
-    zshc_err "migration failed; ${RC} was left unchanged."
-    return 1
-  fi
-
-  # 4. Seed the user customization layer (never overwrites existing files).
-  zshc_log "  user layer: $(zshc_user_layer)"
-  zshc_seed_user_layer "$REPO_DIR"
-
-  # 5. Inject the stable managed block.
-  if zshc_write_managed_block "$RC" "$REPO_DIR"; then
-    zshc_log "  installed managed block in ${RC}"
-  else
-    zshc_log "  managed block already up to date in ${RC}"
-  fi
-
-  # 6. Validate before activation; roll back the rc if the framework is broken.
-  if ! zshc_validate "$REPO_DIR"; then
-    zshc_err "framework failed validation; restoring ${RC}"
-    if [[ -n $backup ]]; then
-      cp -p "$backup" "$RC"
-    else
-      rm -f "$RC"
-    fi
-    return 1
-  fi
-
-  # 7. Refresh the plugin cache (best effort).
-  zshc_refresh_cache "$REPO_DIR" || zshc_warn "could not pre-build the plugin cache; it will build on first shell start"
-
-  zshc_log ""
-  zshc_log "Done. Restart your shell:  exec zsh"
-  zshc_log "Diagnostics:               zsh-custom doctor"
-  if [[ -n $backup ]]; then
-    zshc_log "Backup of previous rc:     ${backup}"
-  fi
+  return 1
 }
 
-main "$@"
+missing=()
+command -v chezmoi >/dev/null 2>&1 || missing+=(chezmoi)
+antidote_found || missing+=(antidote)
+command -v starship >/dev/null 2>&1 || missing+=(starship)
+
+if (( ${#missing[@]} )); then
+  echo "zsh-custom: missing system prerequisites:" >&2
+  for d in "${missing[@]}"; do
+    printf '  %-9s %s\n' "$d" "$(dep_hint "$d")" >&2
+  done
+  echo "Install them with your package manager, then re-run this script." >&2
+  exit 1
+fi
+
+if [[ -f ${HOME}/.zshrc ]]; then
+  echo "First apply: your existing shell files are backed up to *.pre-chezmoi."
+fi
+
+exec chezmoi init --apply "$@" "$repo"
