@@ -12,7 +12,7 @@ zshrc_antidote_path() {
     [[ -r $c ]] && { print -r -- $c; return 0 }
   done
   if (( $+commands[brew] )); then
-    c="$(brew --prefix)/opt/antidote/share/antidote/antidote.zsh"
+    c="$(brew --prefix 2>/dev/null)/opt/antidote/share/antidote/antidote.zsh"
     [[ -r $c ]] && { print -r -- $c; return 0 }
   fi
   return 1
@@ -22,19 +22,24 @@ zshrc_antidote_path() {
 # Keeps generated files out of the managed ~/.config/zsh directory.
 zshrc_antidote_bundle_load() {
   emulate -L zsh
-  local list=$1 cache tmp
+  local list=$1 cache tmp line
   [[ -r $list ]] || return 0
   grep -qvE '^[[:space:]]*(#|$)' "$list" 2>/dev/null || return 0
   cache="$ZSH_CACHE/${${list:t}:r}.zsh"
   if [[ ! -s $cache || $list -nt $cache ]]; then
     tmp="$cache.tmp"
-    if antidote bundle < "$list" >| "$tmp" 2>/dev/null; then
-      mv -f -- "$tmp" "$cache"
-    else
-      rm -f -- "$tmp"
-      print -u2 "zsh: warning: could not resolve plugins in $list"
-      return 1
+    if ! antidote bundle < "$list" >| "$tmp" 2>/dev/null; then
+      # One bad plugin must not drop the whole stage: resolve individually.
+      print -u2 "zsh: warning: could not resolve all plugins in $list; checking individually"
+      : > "$tmp"
+      while IFS= read -r line; do
+        [[ -z ${line//[[:space:]]/} || $line == \#* ]] && continue
+        if ! antidote bundle <<< "$line" >> "$tmp" 2>/dev/null; then
+          print -u2 "zsh: warning: plugin unavailable: $line"
+        fi
+      done < "$list"
     fi
+    mv -f -- "$tmp" "$cache"
   fi
   source "$cache"
 }
