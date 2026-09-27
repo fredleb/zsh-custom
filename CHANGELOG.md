@@ -4,6 +4,19 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2026-09-27
+
+### Fixed
+- **README**: corrected the install/upgrade instructions — the CLI location and
+  `PATH` context, a real example version (the old one did not exist), an
+  existing-clone path, a pre-v2 upgrade path, and a troubleshooting section.
+- **Completion**: restored the interactive completion menu (selectable list,
+  arrow-key navigation, highlighting) that the previous configuration provided.
+- **Prompt**: the host, time, runtime, and git elements now use the terminal's
+  default foreground so they stay readable on light backgrounds; the host is
+  blue only for remote sessions; the extra space after the prompt character is
+  gone.
+
 ## [2.0.0] - 2026-09-27
 
 ### Added
