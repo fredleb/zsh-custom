@@ -1,0 +1,8 @@
+# zsh-custom default plugins — stage 1 (loaded before compinit).
+#
+# zsh-completions only adds its directory to fpath, so it must be sourced
+# before compinit runs. Syntax highlighting is loaded separately, last.
+# See zsh_plugins.git.txt (after compinit) and zsh_plugins.last.txt.
+
+zsh-users/zsh-completions
+zsh-users/zsh-autosuggestions

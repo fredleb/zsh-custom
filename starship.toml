@@ -1,0 +1,74 @@
+# zsh-custom default prompt — font-free (no Nerd Font required).
+# Plain Unicode glyphs only: ⬡ ± ▴ ▾ ● ↵ ≡
+# Users can copy this to $ZSHRC_CUSTOM/theme.toml and edit it there.
+
+add_newline = true
+
+# Line 1: user@host  path ............ time
+# Line 2: status + character   ......... node + git (right-aligned)
+format = """
+$username$hostname $directory$fill$time
+$status$character """
+right_format = "$custom$git_branch$git_status"
+
+[username]
+show_always = true
+style_user = "bold white"
+style_root = "bold red"
+format = "[$user]($style)@"
+
+[hostname]
+ssh_only = false
+style = "bold white"
+format = "[$hostname]($style) "
+
+[directory]
+style = "bold white"
+truncation_length = 2
+truncate_to_repo = false
+format = "[$path]($style) "
+
+[time]
+disabled = false
+style = "white"
+time_format = "%T"
+format = "\\[[$time]($style)\\] "
+
+[fill]
+symbol = " "
+
+[status]
+disabled = false
+style = "red"
+symbol = "↵ "
+format = "[$symbol$status]($style) "
+
+[character]
+success_symbol = "[\\$](green)"
+error_symbol = "[\\$](red)"
+
+[custom.zsc_node]
+# Always-on Node indicator (matches the previous theme's nvm prompt).
+command = "node --version 2>/dev/null"
+when = "command -v node >/dev/null 2>&1"
+symbol = "⬡ "
+style = "bold white"
+format = "[$symbol$output]($style) "
+
+[git_branch]
+symbol = "±"
+style = "bold white"
+format = "\\[[$symbol$branch]($style) "
+
+[git_status]
+style = "bold white"
+format = "[$all_status$ahead_behind]($style)\\] "
+stashed = "≡"
+ahead = "▴"
+behind = "▾"
+diverged = "▴▾"
+conflicted = "✖"
+up_to_date = "✓"
+untracked = "●"
+staged = "●"
+modified = "●"

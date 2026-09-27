@@ -1,0 +1,2 @@
+# Loaded last, after user plugins, so syntax highlighting wraps everything.
+zsh-users/zsh-syntax-highlighting

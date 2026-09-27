@@ -1,0 +1,18 @@
+# User-private and generated files — never commit these.
+# NOTE: anchor to root so the shipped template templates/user/secrets.zsh is kept.
+
+# A stray secrets file at the repo root
+/secrets.zsh
+*.local.zsh
+
+# Shell compiled files
+*.zwc
+*.zwc.old
+.zshrc.zwc
+
+# Installer backups of a user's shell config
+.zshrc.*
+zshrc.bak.*
+
+# Local test/sandbox artifacts
+/tmp-sandbox/
