@@ -1,0 +1,15 @@
+# Repo-only files: never install these into $HOME.
+README.md
+CHANGELOG.md
+LICENSE
+install.sh
+.gitignore
+ci/
+.github/
+openspec/
+.opencode/
+docs/
+# User-private files: never manage these even if they land in the source dir.
+secrets.zsh
+local.zsh
+*.local.zsh
