@@ -74,6 +74,44 @@ chmod 600 ~/.config/zsh/secrets.zsh
 echo 'export GITEA_TOKEN="..."' >> ~/.config/zsh/secrets.zsh
 ```
 
+## Shell conveniences
+
+The default configuration provides these out of the box. They come from
+upstream oh-my-zsh library files loaded through antidote (`lib/directories.zsh`
+and `lib/history.zsh`), so they track upstream and are not hand-maintained here.
+
+| Convenience | Source |
+|---|---|
+| `l`, `ll`, `la`, `lsa` — list directory contents | `lib/directories.zsh` |
+| `..` — change to the parent directory | `lib/directories.zsh` (via `auto_cd`) |
+| `md`, `rd`, `-`, `1`–`9`, `d`, `...` | `lib/directories.zsh` |
+| Up/Down recall history, shared across shells | `lib/history.zsh` |
+| A command line starting with a space is not recorded | `lib/history.zsh` |
+
+To override any of these, edit `~/.config/zsh/local.zsh` (sourced last), for
+example:
+
+```sh
+# Use different listing flags
+alias l='ls -lFh'
+# Do not change directory when a bare directory name is typed
+unsetopt auto_cd
+# Record space-prefixed commands after all
+unsetopt hist_ignore_space
+```
+
+## Release policy
+
+Every merge to the main branch is a release. The pull request carries the
+version bump and a `CHANGELOG.md` entry, using semantic versioning: MAJOR for a
+breaking change, MINOR for a new or changed user-visible capability, PATCH for a
+fix, documentation, or internal change. CI blocks a merge to main whose version
+is unchanged, and a workflow tags the merged version.
+
+To enforce this in the repository settings, require the `version` check to pass
+before merging to `main` (Settings → Branches → branch protection). Merges that
+bypass CI are still tagged by the release workflow on push.
+
 ## Upgrade and pin
 
 `chezmoi update` fetches and applies the latest source. To pin or roll back:

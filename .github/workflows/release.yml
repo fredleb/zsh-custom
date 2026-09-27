@@ -1,0 +1,44 @@
+name: Release
+
+# Every merge to main is a release: tag the version recorded in CHANGELOG.md.
+# Runs on push (including a merge) rather than on the pull request, so release
+# credentials never reach pull-request code.
+on:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    name: tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read the version from CHANGELOG.md
+        id: version
+        run: |
+          version="$(grep -m1 -E '^## \[[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md \
+            | sed -E 's/^## \[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/')"
+          if [ -z "$version" ]; then
+            echo "no version heading in CHANGELOG.md (expected '## [x.y.z] - date')" >&2
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Create the tag if it does not exist
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          tag="v${VERSION}"
+          if git rev-parse --verify --quiet "refs/tags/${tag}"; then
+            echo "tag ${tag} already exists; nothing to do"
+            exit 0
+          fi
+          git tag --annotate "${tag}" --message "Release ${tag}"
+          git push origin "${tag}"
+          echo "created tag ${tag}"

@@ -29,6 +29,20 @@ jobs:
         run: bash ci/check-no-privilege.sh
       - name: secret scan
         run: bash ci/check-secrets.sh
+      - name: shell conveniences
+        run: bash ci/check-conveniences.sh
+
+  version:
+    name: version
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: version bump required for main
+        if: github.base_ref == 'main' || github.base_ref == 'master'
+        run: bash ci/check-version.sh "origin/${{ github.base_ref }}" .
 
   install:
     name: install (${{ matrix.os }})
