@@ -9,7 +9,7 @@
 - [x] 2.2 Add CI workflow running shellcheck, `zsh -n` over all zsh files, and secret scanning; verify the workflow fails a deliberately broken fixture (syntax error and a fake secret).
 - [x] 2.3 Add CI job that performs a clean headless install and asserts a shell starts without errors; verify the job passes on Linux.
 - [x] 2.4 Add CI job that runs the installer twice and asserts `~/.zshrc` is unchanged after the second run; verify the job passes.
-- [ ] 2.5 Add a macOS CI job (or matrix entry) for syntax and headless load; verify it passes.
+- [x] 2.5 Add a macOS CI job (or matrix entry) for syntax and headless load; verify it passes. (Completed in the v3 chezmoi migration: the end-to-end install test now runs on both ubuntu-latest and macos-latest.)
 - [x] 2.6 Add a CI check that fails when a privilege-escalation command (`sudo`, `su`, `doas`) appears in any script; verify it fails on a fixture containing `sudo` and passes otherwise.
 
 ## 3. Framework entrypoint and installer
