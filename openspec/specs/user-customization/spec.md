@@ -1,10 +1,22 @@
-## MODIFIED Requirements
+# user-customization Specification
+
+## Purpose
+Defines the supported, update-proof place where users and sites customize the shell, so that pulling a new framework version never removes their configuration.
+
+## Requirements
 
 ### Requirement: Dedicated user customization layer
 The framework SHALL define a user customization layer consisting of untracked files that the distribution tool never manages: `~/.config/zsh/local.zsh`, `~/.config/zsh/secrets.zsh`, and `~/.zshrc.local`. The framework SHALL NOT create these files or overwrite them; documentation SHALL show how to create them. They SHALL NOT be part of the managed set.
 
-#### Scenario: Untouched by updates
-- **WHEN** a user maintains settings in the customization files and the framework is updated
+#### Scenario: Created once, then left alone
+- **WHEN** the framework is applied on a machine without customization files
+- **THEN** the shell starts normally
+- **AND** the framework does not create them
+- **WHEN** the user later creates and edits the customization files
+- **THEN** the framework never overwrites them on subsequent applies
+
+#### Scenario: User edits survive framework update
+- **WHEN** the user maintains settings in the customization files and the framework is updated
 - **THEN** those files are unchanged and still loaded
 
 #### Scenario: Not created by the framework
@@ -18,6 +30,11 @@ The managed entrypoint SHALL source framework fragments in lexical order, then t
 #### Scenario: User overrides a default
 - **WHEN** the user sets a value in the customization file that also has a framework default
 - **THEN** the user's value is effective
+
+#### Scenario: Underscore-prefixed fragments
+- **WHEN** a framework fragment is renamed so it is no longer picked up by the lexical glob
+- **THEN** the fragment is not loaded
+- **AND** the shell still starts without error
 
 #### Scenario: Missing override files are fine
 - **WHEN** a customization file is absent
@@ -34,5 +51,5 @@ The framework SHALL allow additional plugins and prompt customization without ed
 Documentation SHALL name the exact files to edit for plugins, prompt, secrets, and general configuration, and the drift/diagnostics commands SHALL help users locate the managed source of a file.
 
 #### Scenario: New user finds the entry points
-- **WHEN** a user reads the documentation
+- **WHEN** a user reads the documentation or runs diagnostics
 - **THEN** they can identify the exact file paths to edit for plugins, prompt, secrets, and general configuration

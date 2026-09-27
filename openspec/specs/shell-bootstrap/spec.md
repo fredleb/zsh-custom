@@ -1,31 +1,36 @@
-## REMOVED Requirements
+# shell-bootstrap Specification
 
-### Requirement: Stable version-invariant managed block
-**Reason**: Distribution is delegated to chezmoi, which manages `~/.zshrc` as a normal file; there is no injected, version-invariant block.
-**Migration**: Existing users run the new `install.sh`, which applies the chezmoi source. The existing `~/.zshrc` is backed up to `~/.zshrc.pre-chezmoi` on first apply, so the old block is recoverable. Nothing else must be done to remove the block; taking over the file removes it.
+## Purpose
+Defines the install, update, and removal lifecycle of the zsh distribution, centered on a stable entrypoint that lets users upgrade without their shell configuration ever being overwritten.
 
-## MODIFIED Requirements
+## Requirements
 
 ### Requirement: Non-destructive migration of existing installs
 The installer SHALL preserve an existing hand-edited shell configuration rather than silently replace it. On the first apply it SHALL copy any existing `~/.zshrc`, `~/.zshenv`, `~/.zprofile`, and `~/.zlogin` to the same name with a `.pre-chezmoi` suffix unless that backup already exists. The framework SHALL NOT attempt to parse or relocate a legacy configuration itself; documentation SHALL describe how to move personal settings into the untracked customization files.
 
-#### Scenario: Existing configuration is backed up
-- **WHEN** the configuration is applied on a machine with an existing `~/.zshrc`
-- **THEN** a copy is saved as `~/.zshrc.pre-chezmoi` before any managed file is written
-- **AND** the backup is not overwritten on later applies
+#### Scenario: Legacy configuration is migrated
+- **WHEN** the framework is applied on a machine with an existing hand-edited shell configuration
+- **THEN** each existing shell file is copied to `<name>.pre-chezmoi` before any managed file is written
+- **AND** the documentation describes how to move the previous personal settings into the untracked customization files
+- **AND** the backup location is reported so the user can review it
+
+#### Scenario: Refusal to destroy
+- **WHEN** a managed file on disk differs from the source (drift)
+- **THEN** the difference is reported by the diff/status command rather than applied silently
+- **AND** the user can reconcile or re-apply deliberately
 
 #### Scenario: No legacy parsing
-- **WHEN** the configuration is applied
+- **WHEN** the framework is applied
 - **THEN** it does not parse or classify a legacy antigen configuration
-- **AND** it reports the backup location so the user can review it
 
 ### Requirement: Idempotent install and update
 Applying the configuration SHALL be idempotent. Re-applying or updating SHALL not accumulate duplicate content, SHALL succeed when already current, and SHALL limit changes to the managed file set. Updating SHALL refresh the source repository and re-apply it.
 
-#### Scenario: Apply twice
+#### Scenario: Install twice
 - **WHEN** the configuration is applied twice with no source change
 - **THEN** the second apply makes no changes
 - **AND** the drift report is empty
+- **AND** files outside the managed set are untouched
 
 #### Scenario: Update
 - **WHEN** the user runs the update command
@@ -35,22 +40,58 @@ Applying the configuration SHALL be idempotent. Re-applying or updating SHALL no
 ### Requirement: Uninstall removes only what it owns
 Uninstalling SHALL remove the distribution tool's own configuration, state, and source without deleting user-authored configuration. Because shell files are installed as normal files, the user SHALL be told which installed files remain and may delete them.
 
-#### Scenario: Purge leaves targets
-- **WHEN** the user runs the uninstall/purge command
+#### Scenario: Uninstall preserves user content
+- **WHEN** the user uninstalls/purges the framework
 - **THEN** the distribution tool's configuration, state, and source are removed
 - **AND** the installed shell files and the untracked customization files remain until the user deletes them
 
+#### Scenario: Purge leaves targets
+- **WHEN** the user runs the uninstall/purge command
+- **THEN** the installed shell files remain on disk
+- **AND** the untracked customization files are untouched
+
 ### Requirement: Platform and prerequisite detection
 The framework SHALL support Linux and macOS, SHALL verify a supported zsh version, and SHALL verify that required system dependencies are installed and locatable: chezmoi, antidote, and Starship. When a dependency is missing it SHALL print platform-specific install instructions and SHALL NOT install it. The distribution tool SHALL be obtained from the operating system or Homebrew package manager, not from a mutable download endpoint.
+
+#### Scenario: Unsupported environment
+- **WHEN** the installer runs on an unrecognized platform or with an unsupported zsh version
+- **THEN** it exits non-zero
+- **AND** it states the detected platform, the required minimum, and how to proceed
+
+#### Scenario: Linux package manager detected
+- **WHEN** the installer runs on a supported Linux distribution
+- **THEN** it identifies the matching package manager and shows the exact install command for any missing dependency
+- **AND** it does not run that command
+
+#### Scenario: System dependency missing
+- **WHEN** chezmoi, antidote, or Starship is not installed
+- **THEN** it reports which dependency is missing
+- **AND** it prints the platform-specific package or command to install it
+- **AND** it does not install the dependency itself
 
 #### Scenario: macOS supported
 - **WHEN** the configuration is applied on macOS with Homebrew-installed dependencies
 - **THEN** it succeeds using the same source as on Linux
 
-#### Scenario: System dependency missing
-- **WHEN** chezmoi, antidote, or Starship is not installed
-- **THEN** the framework reports which dependency is missing and the platform-specific command to install it
-- **AND** it does not install the dependency itself
+### Requirement: No privilege escalation by the framework
+No script in the framework SHALL invoke `sudo`, `su`, `doas`, or otherwise attempt to elevate privileges, at install, update, or runtime. Any operation that would require elevated privileges SHALL be left to the user.
+
+#### Scenario: Missing dependency requires manual action
+- **WHEN** a required system dependency is missing
+- **THEN** the framework fails with an actionable message and exits non-zero
+- **AND** it does not attempt any privileged installation
+
+#### Scenario: No privileged command in the codebase
+- **WHEN** the repository's scripts are scanned
+- **THEN** no privilege-escalation command is present
+
+### Requirement: Validation before activation
+The framework SHALL be syntax-checked before it becomes active. If validation fails, the previously working configuration SHALL remain in effect.
+
+#### Scenario: Failed update leaves prior state usable
+- **WHEN** an update introduces a syntax error detected during validation
+- **THEN** the update is not activated
+- **AND** the user's shell continues to start using the previous valid state
 
 ### Requirement: Diagnostics command
 The framework SHALL provide diagnostics that report dependency status, the drift between the source and the installed files, and any problems.
@@ -59,8 +100,6 @@ The framework SHALL provide diagnostics that report dependency status, the drift
 - **WHEN** the user runs the diagnostics command
 - **THEN** it reports dependency status and problems
 - **AND** the user can see whether installed files differ from the source
-
-## ADDED Requirements
 
 ### Requirement: chezmoi-managed shell configuration
 The repository SHALL be a chezmoi source directory. Installation SHALL apply that source to the user's home directory, and the managed set SHALL be `~/.zshenv`, `~/.zshrc`, the shell configuration directory (default `~/.config/zsh`), and `~/.config/starship.toml`. Files outside the managed set SHALL NOT be modified.
