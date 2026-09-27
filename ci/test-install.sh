@@ -3,8 +3,13 @@
 set -euo pipefail
 
 here="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-sb="$(mktemp -d)"
+# Create the sandbox outside a world-writable parent: compaudit treats
+# completion directories under such a parent as insecure, and compinit then
+# prompts for input (which aborts in a headless shell).
+tmpbase="${RUNNER_TEMP:-$(cd "$here/.." && pwd)}"
+sb="$(mktemp -d "$tmpbase/zsh-custom-test.XXXXXX")"
 trap 'rm -rf -- "$sb"' EXIT
+umask 022
 
 # Simulate an existing hand-edited rc so we can prove it is backed up.
 printf '# my own line\nexport USER_LINE=1\n' > "${sb}/.zshrc"
