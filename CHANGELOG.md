@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.1] - 2026-09-27
+
+### Changed
+- Project specifications updated to record the terminal navigation keys and the
+  Delete-key modifier bindings shipped in 3.3.0 and 3.4.0, and the corresponding
+  completed changes archived. No shell behavior change.
+
 ## [3.4.0] - 2026-09-27
 
 ### Fixed
