@@ -4,6 +4,16 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2026-09-27
+
+### Fixed
+- The Delete key's modifier combinations now delete text instead of inserting
+  escape sequences or switching to vi command mode: Shift+Delete deletes the
+  character under the cursor, Ctrl+Delete deletes the following word, and
+  Alt+Delete deletes the preceding word. These are the sequences terminals and
+  multiplexers emit with xterm-style keys (`xterm-keys on`, as byobu sets)
+  (`dot_config/zsh/conf.d/06-keybindings.zsh`).
+
 ## [3.3.0] - 2026-09-27
 
 ### Fixed

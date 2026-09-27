@@ -90,6 +90,15 @@ else
         for km in emacs viins; do
           nav_check $km "^[[2~" overwrite-mode
         done
+
+        # Delete key modifiers (xterm-style encodings).
+        nav_check emacs "^[[3;2~" delete-char
+        nav_check viins "^[[3;2~" delete-char
+        nav_check vicmd "^[[3;2~" vi-delete-char
+        for km in emacs viins vicmd; do
+          nav_check $km "^[[3;5~" kill-word
+          nav_check $km "^[[3;3~" backward-kill-word
+        done
       ' 2>/dev/null
     )"
     if [[ -n "$out" ]]; then

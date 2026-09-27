@@ -104,6 +104,7 @@ hand-maintained here.
 | Up/Down recall history, shared across shells | `lib/history.zsh` |
 | With text typed, Up/Down walk the history entries beginning with it, skipping repeats | zsh built-in widgets |
 | Delete, Home, End, Insert, PageUp, PageDown behave in any editing mode | zsh built-in widgets |
+| Shift+Delete, Ctrl+Delete, Alt+Delete delete text in any editing mode | zsh built-in widgets |
 | A command line starting with a space is not recorded | `lib/history.zsh` |
 
 To override any of these, edit `~/.config/zsh/local.zsh` (sourced last), for
