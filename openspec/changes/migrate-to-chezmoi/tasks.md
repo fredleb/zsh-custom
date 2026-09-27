@@ -28,8 +28,8 @@
 
 ## 6. Continuous integration
 
-- [ ] 6.1 Add `ci/test-install.sh` that applies the checked-out source to a throwaway `$HOME`, asserts the managed files exist, asserts a pre-existing `~/.zshrc` was backed up, asserts a second apply leaves no drift, and asserts a headless interactive shell starts without framework errors; verify it passes locally with `bash ci/test-install.sh`.
-- [ ] 6.2 Update `.github/workflows/ci.yml`: keep lint (shellcheck + `zsh -n`) and hygiene (no-privilege + secret scan); run `ci/test-install.sh` on a matrix of `ubuntu-latest` and `macos-latest`, installing chezmoi/antidote/starship per platform; verify the workflow passes on both operating systems.
+- [x] 6.1 Add `ci/test-install.sh` that applies the checked-out source to a throwaway `$HOME`, asserts the managed files exist, asserts a pre-existing `~/.zshrc` was backed up, asserts a second apply leaves no drift, and asserts a headless interactive shell starts without framework errors; verify it passes locally with `bash ci/test-install.sh`.
+- [x] 6.2 Update `.github/workflows/ci.yml`: keep lint (shellcheck + `zsh -n`) and hygiene (no-privilege + secret scan); run `ci/test-install.sh` on a matrix of `ubuntu-latest` and `macos-latest`, installing chezmoi/antidote/starship per platform; verify the workflow passes on both operating systems.
 
 ## 7. Documentation and release
 
