@@ -6,13 +6,18 @@ here="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 sb="$(mktemp -d)"
 trap 'rm -rf -- "$sb"' EXIT
 
-mkdir -p "${sb}/.config/chezmoi"
-printf 'sourceDir = "%s"\n' "$here" > "${sb}/.config/chezmoi/chezmoi.toml"
-
 # Simulate an existing hand-edited rc so we can prove it is backed up.
 printf '# my own line\nexport USER_LINE=1\n' > "${sb}/.zshrc"
 
 export HOME="$sb"
+# Isolate the whole XDG environment: some runners set XDG_CONFIG_HOME, which
+# chezmoi prefers over $HOME for config-file discovery.
+export XDG_CONFIG_HOME="${sb}/.config"
+export XDG_DATA_HOME="${sb}/.local/share"
+export XDG_CACHE_HOME="${sb}/.cache"
+mkdir -p "${XDG_CONFIG_HOME}/chezmoi"
+printf 'sourceDir = "%s"\n' "$here" > "${XDG_CONFIG_HOME}/chezmoi/chezmoi.toml"
+
 chezmoi apply
 
 test -f "${sb}/.zshrc"
