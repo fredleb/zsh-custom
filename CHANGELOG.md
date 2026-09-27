@@ -12,10 +12,10 @@ Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   existing-clone path, a pre-v2 upgrade path, and a troubleshooting section.
 - **Completion**: restored the interactive completion menu (selectable list,
   arrow-key navigation, highlighting) that the previous configuration provided.
-- **Prompt**: the host, time, runtime, and git elements now use the terminal's
-  default foreground so they stay readable on light backgrounds; the host is
-  blue only for remote sessions; the extra space after the prompt character is
-  gone.
+- **Prompt**: the host, time, runtime, and git branch name now use the
+  terminal's default foreground so they stay readable on light backgrounds;
+  git status indicators are color-coded by state; the host is blue only for
+  remote sessions; the extra space after the prompt character is gone.
 
 ## [2.0.0] - 2026-09-27
 
