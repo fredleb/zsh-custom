@@ -4,6 +4,18 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2026-09-27
+
+### Fixed
+- The terminal navigation keys (Delete, Home, End, Insert, PageUp, PageDown)
+  now perform their editing action instead of inserting escape sequences or
+  changing the editing mode. Previously, with the vi keymap selected (when
+  `$EDITOR` contains `vi`), a key's escape sequence was read as "leave insert
+  mode" and the rest ran as vi commands — Delete, for example, changed the case
+  of the following text. The keys are bound in the emacs, vi, and vi-command
+  keymaps, using the terminal's advertised sequences with well-known fallbacks
+  (`dot_config/zsh/conf.d/06-keybindings.zsh`).
+
 ## [3.2.2] - 2026-09-27
 
 ### Changed

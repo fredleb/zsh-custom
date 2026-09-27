@@ -92,8 +92,9 @@ echo 'export GITEA_TOKEN="..."' >> ~/.config/zsh/secrets.zsh
 
 The default configuration provides these out of the box. Most come from
 upstream oh-my-zsh library files loaded through antidote (`lib/directories.zsh`
-and `lib/history.zsh`); prefix history search uses zsh's own built-in
-line-editor widgets. All track upstream rather than being hand-maintained here.
+and `lib/history.zsh`); prefix history search and the terminal navigation keys
+use zsh's own built-in line-editor widgets. All track upstream rather than being
+hand-maintained here.
 
 | Convenience | Source |
 |---|---|
@@ -102,6 +103,7 @@ line-editor widgets. All track upstream rather than being hand-maintained here.
 | `md`, `rd`, `-`, `1`–`9`, `d`, `...` | `lib/directories.zsh` |
 | Up/Down recall history, shared across shells | `lib/history.zsh` |
 | With text typed, Up/Down walk the history entries beginning with it, skipping repeats | zsh built-in widgets |
+| Delete, Home, End, Insert, PageUp, PageDown behave in any editing mode | zsh built-in widgets |
 | A command line starting with a space is not recorded | `lib/history.zsh` |
 
 To override any of these, edit `~/.config/zsh/local.zsh` (sourced last), for
