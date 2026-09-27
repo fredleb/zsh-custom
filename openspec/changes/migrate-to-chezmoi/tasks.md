@@ -33,6 +33,6 @@
 
 ## 7. Documentation and release
 
-- [ ] 7.1 Rewrite `README.md` for the chezmoi workflow (install, requirements including `brew install antidote` / `brew install chezmoi`, daily commands `chezmoi update|diff|doctor|status`, customization files, secrets, uninstall); verify a new user can follow it end to end.
-- [ ] 7.2 Add the `v3.0.0` entry to `CHANGELOG.md` stating the breaking changes and required user actions, and tag `v3.0.0`; verify the tag exists and the changelog names the migration guide.
-- [ ] 7.3 Verify `.opencode/` and `openspec/` remain in the repo and are excluded from the managed set.
+- [x] 7.1 Rewrite `README.md` for the chezmoi workflow (install, requirements including `brew install antidote` / `brew install chezmoi`, daily commands `chezmoi update|diff|doctor|status`, customization files, secrets, uninstall); verify a new user can follow it end to end.
+- [x] 7.2 Add the `v3.0.0` entry to `CHANGELOG.md` stating the breaking changes and required user actions, and tag `v3.0.0`; verify the tag exists and the changelog names the migration guide.
+- [x] 7.3 Verify `.opencode/` and `openspec/` remain in the repo and are excluded from the managed set.

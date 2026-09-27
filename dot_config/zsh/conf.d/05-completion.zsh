@@ -4,7 +4,7 @@
 # config) applies the same ones in its lib/completion.zsh. Without them the
 # completion list has no selectable menu and no highlighting.
 #
-# Override any of this in $ZSHRC_CUSTOM/conf.d/ or local.zsh (loaded later).
+# Override any of this in ~/.config/zsh/local.zsh (sourced last).
 
 # The complist module provides the selectable menu.
 zmodload -i zsh/complist

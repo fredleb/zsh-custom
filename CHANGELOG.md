@@ -4,6 +4,37 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-09-27
+
+### Changed
+- **BREAKING** Distribution is now handled by **chezmoi**. The custom installer,
+  the version-invariant managed block in `~/.zshrc`, the `zsh-custom` CLI, and
+  the seeded user layer are removed. Use `chezmoi update`, `chezmoi diff`,
+  `chezmoi status`, and `chezmoi doctor`.
+- The repository is now a **chezmoi source directory**. Managed files are
+  `~/.zshenv`, `~/.zshrc`, `~/.config/zsh/**`, and `~/.config/starship.toml`.
+- Personal configuration lives in untracked files that updates never touch:
+  `~/.config/zsh/local.zsh`, `~/.config/zsh/secrets.zsh`, and `~/.zshrc.local`.
+- chezmoi, antidote, and Starship are system prerequisites; the configuration
+  never installs packages and never escalates privileges.
+- Versioning is by git tags on the source; there is no `VERSION` file.
+
+### Added
+- macOS is now a supported, CI-verified platform (the end-to-end install test
+  runs on both Linux and macOS).
+- `docs/migrating-from-v2.md` documents the one-time migration and rollback.
+- A first-run backing up of existing shell files to `*.pre-chezmoi`.
+
+### Removed
+- `init.zsh`, `bin/zsh-custom`, `lib/`, the root `conf.d/`, `templates/`,
+  `VERSION`, and the legacy plugin-list files.
+
+### Migration
+- Run the new `install.sh`; it backs up your existing `~/.zshrc` and applies the
+  chezmoi source. Move personal settings from `~/.config/zsh-custom/` into
+  `~/.config/zsh/local.zsh` and `~/.config/zsh/secrets.zsh`. See
+  [docs/migrating-from-v2.md](docs/migrating-from-v2.md).
+
 ## [2.0.1] - 2026-09-27
 
 ### Fixed

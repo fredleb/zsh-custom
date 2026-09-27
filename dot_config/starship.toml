@@ -5,7 +5,7 @@
 # colored, and only for remote (SSH) sessions. This matches the previous theme,
 # which used the default foreground for those elements and blue for remote hosts.
 #
-# Users can override any of this in $ZSHRC_CUSTOM/theme.toml.
+# To override the prompt, set STARSHIP_CONFIG in ~/.config/zsh/local.zsh.
 
 add_newline = true
 
