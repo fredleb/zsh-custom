@@ -28,6 +28,10 @@ zshrc_antidote_bundle_load() {
   cache="$ZSH_CACHE/${${list:t}:r}.zsh"
   if [[ ! -s $cache || $list -nt $cache ]]; then
     tmp="$cache.tmp"
+    # The cache directory may not exist yet (fresh install, or any environment
+    # where ~/.cache/zsh has never been created). Without it every bundle write
+    # fails and all plugins are silently disabled.
+    [[ -d $ZSH_CACHE ]] || mkdir -p -- "$ZSH_CACHE" 2>/dev/null
     if ! antidote bundle < "$list" >| "$tmp" 2>/dev/null; then
       # One bad plugin must not drop the whole stage: resolve individually.
       print -u2 "zsh: warning: could not resolve all plugins in $list; checking individually"
@@ -41,6 +45,9 @@ zshrc_antidote_bundle_load() {
     fi
     mv -f -- "$tmp" "$cache"
   fi
+  # Source the bundle. `emulate -L zsh` scopes options set here to this function
+  # and the next `emulate` call undoes them, so the options the convenience
+  # libraries set are re-asserted globally after all stages (see below).
   source "$cache"
 }
 
@@ -70,6 +77,15 @@ fi
 
 # Stage 2: plugins that call compdef at source time.
 zshrc_antidote_bundle_load "$ZSH_CONFIG/plugins.git.txt"
+zshrc_antidote_bundle_load "$ZSH_CONFIG/plugins.omz.txt"
 
 # Stage 3: syntax highlighting last.
 zshrc_antidote_bundle_load "$ZSH_CONFIG/plugins.last.txt"
+
+# Re-assert options that the convenience libraries set. Each bundle is sourced
+# from its own `emulate -L zsh` scope, so an option set by an earlier stage
+# (auto_cd from directories.zsh) is undone by a later stage's `emulate`. Set
+# them once more, globally, after all stages have loaded.
+setopt auto_cd auto_pushd pushd_ignore_dups pushdminus 2>/dev/null
+setopt share_history hist_ignore_space extended_history hist_ignore_dups 2>/dev/null
+setopt hist_expire_dups_first hist_verify 2>/dev/null

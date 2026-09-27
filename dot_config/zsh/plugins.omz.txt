@@ -1,0 +1,6 @@
+# Stage 2 (loaded after compinit, because directories.zsh calls compdef at
+# source time). Upstream-maintained oh-my-zsh library files that provide the
+# shell conveniences the framework promises: directory listing and navigation
+# aliases, and interactive command history.
+ohmyzsh/ohmyzsh path:lib/directories.zsh
+ohmyzsh/ohmyzsh path:lib/history.zsh

@@ -45,5 +45,21 @@ if grep -qE 'antidote not found|starship not found|command not found' <<<"$out";
   exit 1
 fi
 
+# Plugins must actually resolve in a fresh sandbox. Without the cache-directory
+# bootstrap every bundle write fails and all plugins are silently disabled,
+# which the startup check above would not catch.
+if grep -qE 'plugin unavailable|could not resolve all plugins' <<<"$out"; then
+  echo "plugins failed to resolve in a fresh install" >&2
+  exit 1
+fi
+
+# The promised shell conveniences are present.
+zsh -i -c '
+  for a in l ll la lsa; do [[ -n ${aliases[$a]} ]] || { print -r -- "missing alias: $a" >&2; exit 1; }; done
+  [[ $options[AUTO_CD] == on ]]           || { print -r -- "AUTO_CD is not on" >&2; exit 1; }
+  [[ $options[HIST_IGNORE_SPACE] == on ]] || { print -r -- "HIST_IGNORE_SPACE is not on" >&2; exit 1; }
+  [[ -n $HISTFILE ]]                      || { print -r -- "HISTFILE is empty" >&2; exit 1; }
+'
+
 # Informational: doctor may report unrelated warnings (e.g. no age/gpg configured).
 chezmoi doctor || true

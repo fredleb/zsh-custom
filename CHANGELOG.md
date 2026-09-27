@@ -4,6 +4,37 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2026-09-27
+
+### Added
+- Directory listing and navigation aliases restored (`l`, `ll`, `la`, `lsa`,
+  `md`, `rd`, `-`, `1`–`9`, `d`, and `..`), loaded from the upstream-maintained
+  `ohmyzsh/ohmyzsh lib/directories.zsh` through antidote.
+- Interactive command history restored: it persists across sessions, Up/Down
+  recall it, and it is shared between shells
+  (`ohmyzsh/ohmyzsh lib/history.zsh`).
+- A command line beginning with a space is no longer recorded in history
+  (`hist_ignore_space`).
+- Every merge to the main branch is a release: the version and changelog entry
+  are required, CI blocks a merge without them, and a workflow tags the merged
+  version.
+
+### Fixed
+- Plugins are now loaded on a machine whose `~/.cache/zsh` does not already
+  exist. Previously every bundle write failed, so **all** plugins were silently
+  disabled on a fresh install (and in CI); only pre-existing installs were
+  unaffected.
+- Options set by loaded plugins now persist. The loader's `emulate -L zsh` scope
+  discarded them, which is why `auto_cd` and the history options had no effect.
+
+### Notes
+- `..` works because the library enables `auto_cd`; typing a bare directory name
+  also changes into it, matching the pre-v2 behavior. Disable it with
+  `unsetopt auto_cd` in `~/.config/zsh/local.zsh`.
+- `lib/history.zsh` aliases `history` to oh-my-zsh's `omz_history`.
+- Space-prefixed commands already present in `~/.zsh_history` remain; exclusion
+  applies from this release onward.
+
 ## [3.0.0] - 2026-09-27
 
 ### Changed
