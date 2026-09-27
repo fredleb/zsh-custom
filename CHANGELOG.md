@@ -4,6 +4,13 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.1] - 2026-09-27
+
+### Changed
+- Project specifications updated to record the 3.2.0 prefix history search and
+  the XDG base-directory behavior, and the corresponding completed changes
+  archived. No shell behavior change.
+
 ## [3.2.0] - 2026-09-27
 
 ### Added
