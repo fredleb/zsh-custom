@@ -51,7 +51,7 @@ jobs:
           else
             sudo apt-get update
             sudo apt-get install -y zsh git curl
-            /bin/bash -c "$(curl -fsSL https://starship.rs/install.sh)" -- -y -b "$HOME/.local/bin"
+            sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- -y -b "$HOME/.local/bin"
             git clone --depth=1 https://github.com/mattmc3/antidote.git "$HOME/.antidote"
             echo "ZSHRC_ANTIDOTE_PATH=$HOME/.antidote/antidote.zsh" >> "$GITHUB_ENV"
           fi
