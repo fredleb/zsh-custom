@@ -8,7 +8,19 @@ here="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 # prompts for input (which aborts in a headless shell).
 tmpbase="${RUNNER_TEMP:-$(cd "$here/.." && pwd)}"
 sb="$(mktemp -d "$tmpbase/zsh-custom-test.XXXXXX")"
-trap 'rm -rf -- "$sb"' EXIT
+
+# Cleanup must never fail the job. Git's automatic maintenance can still be
+# writing into antidote's clones when the script ends; on macOS `rm -rf` then
+# races with it and reports "Directory not empty". Retry a few times.
+trap 'for i in 1 2 3 4 5; do rm -rf -- "$sb" 2>/dev/null && break; sleep 1; done' EXIT
+
+# Stop git from starting detached automatic maintenance in the sandbox (the
+# writer that races the cleanup above).
+export GIT_CONFIG_COUNT=3
+export GIT_CONFIG_KEY_0=maintenance.auto       GIT_CONFIG_VALUE_0=false
+export GIT_CONFIG_KEY_1=maintenance.autoDetach GIT_CONFIG_VALUE_1=false
+export GIT_CONFIG_KEY_2=gc.auto                GIT_CONFIG_VALUE_2=0
+
 umask 022
 
 # Simulate an existing hand-edited rc so we can prove it is backed up.

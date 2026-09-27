@@ -38,7 +38,14 @@ elif [[ ! -r "${XDG_CACHE_HOME:-$HOME/.cache}/antidote/github.com/ohmyzsh/ohmyzs
   echo "check-conveniences: antidote cache not found; static checks only"
 else
   sb="$(mktemp -d "${RUNNER_TEMP:-${TMPDIR:-/tmp}}/zsh-conv.XXXXXX")"
-  trap 'rm -rf -- "$sb"' EXIT
+  # Cleanup must never fail the job (git's automatic maintenance can still be
+  # writing into antidote's clones; see test-install.sh). Retry a few times.
+  trap 'for i in 1 2 3 4 5; do rm -rf -- "$sb" 2>/dev/null && break; sleep 1; done' EXIT
+  # Stop git from starting detached automatic maintenance in the sandbox.
+  export GIT_CONFIG_COUNT=3
+  export GIT_CONFIG_KEY_0=maintenance.auto       GIT_CONFIG_VALUE_0=false
+  export GIT_CONFIG_KEY_1=maintenance.autoDetach GIT_CONFIG_VALUE_1=false
+  export GIT_CONFIG_KEY_2=gc.auto                GIT_CONFIG_VALUE_2=0
   export HOME="$sb"
   export XDG_CONFIG_HOME="$sb/.config" XDG_DATA_HOME="$sb/.local/share" XDG_CACHE_HOME="$sb/.cache"
   mkdir -p "$XDG_CONFIG_HOME/chezmoi"
