@@ -1,9 +1,11 @@
 # ~/.zshenv — managed by chezmoi (source: dot_zshenv).
 # Sourced by ALL zsh shells. Keep this fast and side-effect free.
 
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+# XDG base-directory variables are deliberately NOT set here. Setting them to
+# their default values is not neutral: a tool that treats them as an override
+# (for example Debian's nvm init, which derives NVM_DIR from XDG_CONFIG_HOME)
+# can be redirected away from its existing data. Consumers fall back to the
+# standard locations themselves; this file only adds ~/.local/bin to PATH.
 
 # User-local binaries.
 case ":$PATH:" in

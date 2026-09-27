@@ -59,7 +59,29 @@ zsh -i -c '
   [[ $options[AUTO_CD] == on ]]           || { print -r -- "AUTO_CD is not on" >&2; exit 1; }
   [[ $options[HIST_IGNORE_SPACE] == on ]] || { print -r -- "HIST_IGNORE_SPACE is not on" >&2; exit 1; }
   [[ -n $HISTFILE ]]                      || { print -r -- "HISTFILE is empty" >&2; exit 1; }
+  [[ $XDG_CONFIG_HOME == "$HOME/.config" ]]   || { print -r -- "XDG_CONFIG_HOME was overridden: $XDG_CONFIG_HOME" >&2; exit 1; }
+  [[ $ZSH_CONFIG == "$XDG_CONFIG_HOME/zsh" ]] || { print -r -- "ZSH_CONFIG is not derived from XDG_CONFIG_HOME: $ZSH_CONFIG" >&2; exit 1; }
 '
+
+# With none of the XDG base-directory variables set, the shell must not impose
+# them, and must still resolve the managed configuration from the standard
+# locations. (Setting them to defaults redirects tools whose data lives outside
+# the XDG directories, e.g. Debian's nvm init and NVM_DIR.)
+xdg_out="$(
+  unset XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME
+  zsh -i -c '
+    for v in XDG_CONFIG_HOME XDG_CACHE_HOME XDG_DATA_HOME; do
+      [[ -z ${(P)v:-} ]] || print -r -- "imposed $v=${(P)v}"
+    done
+    [[ $ZSH_CONFIG == "$HOME/.config/zsh" ]] || print -r -- "ZSH_CONFIG=$ZSH_CONFIG"
+    [[ $ZSH_CACHE == "$HOME/.cache/zsh" ]]   || print -r -- "ZSH_CACHE=$ZSH_CACHE"
+    [[ -r $ZSH_CONFIG/conf.d/00-antidote.zsh ]] || print -r -- "managed conf.d not found under $ZSH_CONFIG"
+  ' 2>/dev/null
+)"
+if [[ -n "$xdg_out" ]]; then
+  printf '%s\n' "$xdg_out" >&2
+  exit 1
+fi
 
 # Informational: doctor may report unrelated warnings (e.g. no age/gpg configured).
 chezmoi doctor || true

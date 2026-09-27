@@ -64,6 +64,20 @@ echo 'antidote load ~/.config/zsh/plugins.local.txt' >> ~/.config/zsh/local.zsh
 To change the managed configuration itself, edit the chezmoi source
 (`chezmoi cd`) and commit.
 
+### Tool homes outside the XDG directories
+
+The framework does not set the XDG base-directory variables
+(`XDG_CONFIG_HOME`, `XDG_CACHE_HOME`, `XDG_DATA_HOME`); it only uses them when
+you set them. Some tools keep data outside those directories but derive their
+home from an XDG variable when it is present — for example Debian's nvm init,
+which points `NVM_DIR` at `$XDG_CONFIG_HOME/nvm`. If such a tool stops finding
+its data, pin its home in `local.zsh` before the tool is sourced:
+
+```sh
+export NVM_DIR="$HOME/.nvm"
+source /usr/share/nvm/init-nvm.sh
+```
+
 ## Secrets
 
 Prefer a credential helper (`git credential`, `gh auth`, `glab auth`) over
@@ -76,9 +90,10 @@ echo 'export GITEA_TOKEN="..."' >> ~/.config/zsh/secrets.zsh
 
 ## Shell conveniences
 
-The default configuration provides these out of the box. They come from
+The default configuration provides these out of the box. Most come from
 upstream oh-my-zsh library files loaded through antidote (`lib/directories.zsh`
-and `lib/history.zsh`), so they track upstream and are not hand-maintained here.
+and `lib/history.zsh`); prefix history search uses zsh's own built-in
+line-editor widgets. All track upstream rather than being hand-maintained here.
 
 | Convenience | Source |
 |---|---|
@@ -86,6 +101,7 @@ and `lib/history.zsh`), so they track upstream and are not hand-maintained here.
 | `..` — change to the parent directory | `lib/directories.zsh` (via `auto_cd`) |
 | `md`, `rd`, `-`, `1`–`9`, `d`, `...` | `lib/directories.zsh` |
 | Up/Down recall history, shared across shells | `lib/history.zsh` |
+| With text typed, Up/Down walk the history entries beginning with it, skipping repeats | zsh built-in widgets |
 | A command line starting with a space is not recorded | `lib/history.zsh` |
 
 To override any of these, edit `~/.config/zsh/local.zsh` (sourced last), for

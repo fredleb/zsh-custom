@@ -24,6 +24,11 @@ fi
 if ! grep -rqs 'lib/history\.zsh' "$root"/dot_config/zsh/plugins*.txt; then
   fail "lib/history.zsh is not declared in any plugin list"
 fi
+if [[ ! -r "$root/dot_config/zsh/conf.d/06-keybindings.zsh" ]]; then
+  fail "conf.d/06-keybindings.zsh is missing"
+elif ! grep -qs 'up-line-or-beginning-search' "$root/dot_config/zsh/conf.d/06-keybindings.zsh"; then
+  fail "conf.d/06-keybindings.zsh does not configure prefix history search"
+fi
 
 # 2. Runtime: apply the real configuration into a throwaway HOME and assert the
 #    promised behaviours in the resulting interactive shell.
@@ -50,6 +55,15 @@ else
         [[ $options[AUTO_CD] == on ]]           || print -r -- "AUTO_CD is not on"
         [[ $options[HIST_IGNORE_SPACE] == on ]] || print -r -- "HIST_IGNORE_SPACE is not on"
         [[ -n $HISTFILE ]]                      || print -r -- "HISTFILE is empty"
+        [[ $options[HIST_FIND_NO_DUPS] == on ]] || print -r -- "HIST_FIND_NO_DUPS is not on"
+        [[ $(bindkey -M emacs "^[[A") == *up-line-or-beginning-search* ]]   || print -r -- "emacs Up is not prefix history search"
+        [[ $(bindkey -M emacs "^[OA") == *up-line-or-beginning-search* ]]   || print -r -- "emacs Up (application mode) is not prefix history search"
+        [[ $(bindkey -M emacs "^[[B") == *down-line-or-beginning-search* ]] || print -r -- "emacs Down is not prefix history search"
+        [[ $(bindkey -M emacs "^[OB") == *down-line-or-beginning-search* ]] || print -r -- "emacs Down (application mode) is not prefix history search"
+        [[ $(bindkey -M viins "^[[A") == *up-line-or-beginning-search* ]]   || print -r -- "viins Up is not prefix history search"
+        [[ $(bindkey -M viins "^[OA") == *up-line-or-beginning-search* ]]   || print -r -- "viins Up (application mode) is not prefix history search"
+        [[ $(bindkey -M viins "^[[B") == *down-line-or-beginning-search* ]] || print -r -- "viins Down is not prefix history search"
+        [[ $(bindkey -M viins "^[OB") == *down-line-or-beginning-search* ]] || print -r -- "viins Down (application mode) is not prefix history search"
       ' 2>/dev/null
     )"
     if [[ -n "$out" ]]; then
