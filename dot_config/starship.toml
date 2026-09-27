@@ -12,15 +12,34 @@ add_newline = true
 # Line 1: user@host  path ............ time
 # Line 2: status + character   ......... node + git (right-aligned)
 format = """
-$username${custom.host_local}$hostname$directory$fill$time
+${custom.username_root}${custom.username_sudo}${custom.username_plain}${custom.host_local}$hostname$directory$fill$time
 $status$character """
 right_format = "${custom.zsc_node}$git_branch$git_status"
 
-[username]
-show_always = true
-style_user = "bold white"
-style_root = "bold red"
-format = "[$user]($style)@"
+# Username: root = bold red; a sudo-capable user = bold blue; otherwise bold
+# white. The previous theme coloured the username blue for sudo-group members.
+# "sudo-capable" covers the groups that grant root on Linux and macOS
+# (sudo, wheel, admin).
+[custom.username_root]
+command = "id -un"
+when = '[ "$(id -u)" -eq 0 ]'
+style = "bold red"
+shell = ["sh"]
+format = "[$output]($style)@"
+
+[custom.username_sudo]
+command = "id -un"
+when = '[ "$(id -u)" -ne 0 ] && id -Gn 2>/dev/null | grep -qwE "sudo|wheel|admin"'
+style = "bold blue"
+shell = ["sh"]
+format = "[$output]($style)@"
+
+[custom.username_plain]
+command = "id -un"
+when = '[ "$(id -u)" -ne 0 ] && ! (id -Gn 2>/dev/null | grep -qwE "sudo|wheel|admin")'
+style = "bold white"
+shell = ["sh"]
+format = "[$output]($style)@"
 
 # Remote sessions: built-in hostname shows in blue.
 [hostname]
