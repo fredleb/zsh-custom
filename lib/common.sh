@@ -115,24 +115,31 @@ zshc_has_managed_block() {
 
 # Replace or append the managed block in file $1 (framework repo $2).
 # Idempotent; preserves every line outside the markers.
+# Implemented in pure bash (no multi-line awk -v) so it works with BSD awk.
 zshc_write_managed_block() {
-  local rc=$1 repo=$2 block tmp
-  block="$(zshc_managed_block_body "$repo")"
+  local rc=$1 repo=$2
+  local begin="$ZSHC_MARKER_BEGIN" end="$ZSHC_MARKER_END"
+  local tmp line in_block=0 found=0
   [[ -f $rc ]] || : > "$rc"
   tmp="$(mktemp)"
-  if zshc_has_managed_block "$rc"; then
-    awk -v b="$ZSHC_MARKER_BEGIN" -v e="$ZSHC_MARKER_END" -v block="$block" '
-      $0==b {print block; skip=1; next}
-      skip && $0==e {skip=0; next}
-      skip {next}
-      {print}
-    ' "$rc" > "$tmp"
-  else
-    cp "$rc" "$tmp"
+  while IFS= read -r line || [[ -n $line ]]; do
+    if [[ $line == "$begin" ]]; then
+      in_block=1; found=1
+      zshc_managed_block_body "$repo" >> "$tmp"
+      continue
+    fi
+    if (( in_block )) && [[ $line == "$end" ]]; then
+      in_block=0
+      continue
+    fi
+    (( in_block )) && continue
+    printf '%s\n' "$line" >> "$tmp"
+  done < "$rc"
+  if (( ! found )); then
     if [[ -s $tmp ]] && [[ $(tail -c1 "$tmp" | wc -l) -eq 0 ]]; then
       printf '\n' >> "$tmp"
     fi
-    printf '%s\n' "$block" >> "$tmp"
+    zshc_managed_block_body "$repo" >> "$tmp"
   fi
   if cmp -s "$tmp" "$rc"; then
     rm -f "$tmp"; return 1   # already up to date
@@ -142,16 +149,22 @@ zshc_write_managed_block() {
 }
 
 zshc_remove_managed_block() {
-  local rc=$1 tmp
+  local rc=$1
+  local begin="$ZSHC_MARKER_BEGIN" end="$ZSHC_MARKER_END"
+  local tmp line in_block=0
   [[ -f $rc ]] || return 0
   zshc_has_managed_block "$rc" || return 0
   tmp="$(mktemp)"
-  awk -v b="$ZSHC_MARKER_BEGIN" -v e="$ZSHC_MARKER_END" '
-    $0==b {skip=1; next}
-    skip && $0==e {skip=0; next}
-    skip {next}
-    {print}
-  ' "$rc" > "$tmp"
+  while IFS= read -r line || [[ -n $line ]]; do
+    if [[ $line == "$begin" ]]; then
+      in_block=1; continue
+    fi
+    if (( in_block )) && [[ $line == "$end" ]]; then
+      in_block=0; continue
+    fi
+    (( in_block )) && continue
+    printf '%s\n' "$line" >> "$tmp"
+  done < "$rc"
   mv "$tmp" "$rc"
 }
 
