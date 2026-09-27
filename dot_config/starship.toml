@@ -1,0 +1,89 @@
+# zsh-custom default prompt — font-free (no Nerd Font required).
+#
+# Colors: the host, time, runtime and git elements use the terminal's default
+# foreground so they stay readable on any background. Only the host name is
+# colored, and only for remote (SSH) sessions. This matches the previous theme,
+# which used the default foreground for those elements and blue for remote hosts.
+#
+# Users can override any of this in $ZSHRC_CUSTOM/theme.toml.
+
+add_newline = true
+
+# Line 1: user@host  path ............ time
+# Line 2: status + character   ......... node + git (right-aligned)
+format = """
+$username${custom.host_local}$hostname$directory$fill$time
+$status$character """
+right_format = "${custom.zsc_node}$git_branch$git_status"
+
+[username]
+show_always = true
+style_user = "bold white"
+style_root = "bold red"
+format = "[$user]($style)@"
+
+# Remote sessions: built-in hostname shows in blue.
+[hostname]
+ssh_only = true
+style = "bold blue"
+format = "[$hostname]($style) "
+
+# Local sessions: default foreground, not white.
+[custom.host_local]
+command = "hostname -s"
+when = '[ -z "$SSH_CONNECTION" ]'
+style = "none"
+format = "[$output]($style) "
+
+[directory]
+style = "bold white"
+truncation_length = 2
+truncate_to_repo = false
+format = "[$path]($style) "
+
+[time]
+disabled = false
+style = "none"
+time_format = "%T"
+format = "\\[[$time]($style)\\] "
+
+[fill]
+symbol = " "
+
+[status]
+disabled = false
+style = "red"
+symbol = "↵ "
+format = "[$symbol$status]($style) "
+
+# No trailing space here: the format line above already adds one.
+[character]
+success_symbol = "[\\$](green)"
+error_symbol = "[\\$](red)"
+format = "[$symbol]($style)"
+
+[custom.zsc_node]
+command = "node --version 2>/dev/null"
+when = "command -v node >/dev/null 2>&1"
+symbol = "⬡ "
+style = "none"
+format = "[$symbol$output]($style) "
+
+[git_branch]
+symbol = "±"
+style = "none"
+format = "\\[[$symbol](bold green)[$branch]($style) "
+
+# Colour each indicator by state, as the previous theme did.
+[git_status]
+style = "none"
+format = "[$staged](bold green)[$modified](bold yellow)[$untracked](bold red)[$deleted](bold red)[$renamed](bold blue)[$typechanged](bold blue)[$conflicted](bold red)[$stashed](bold magenta)[$ahead_behind](bold cyan)[$up_to_date](bold green)\\] "
+stashed = "≡"
+ahead = "▴"
+behind = "▾"
+diverged = "▴▾"
+conflicted = "✖"
+up_to_date = "✓"
+untracked = "●"
+staged = "●"
+modified = "●"
