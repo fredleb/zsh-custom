@@ -71,6 +71,14 @@ if [[ -o interactive ]]; then
   _zsc_bind_nav end-of-line       emacs,viins,vicmd "${terminfo[kend]}" '^[[F' '^[OF' '^[[4~'
   _zsc_bind_nav up-line           emacs,viins,vicmd "${terminfo[kpp]}" '^[[5~'
   _zsc_bind_nav down-line         emacs,viins,vicmd "${terminfo[knp]}" '^[[6~'
+
+  # Delete key modifiers. xterm-style encodings (emitted by terminals and by
+  # multiplexers with xterm keys, e.g. tmux `xterm-keys on` as byobu sets) so
+  # they must be bound too, or Shift/Ctrl+Delete leave vi insert mode.
+  _zsc_bind_nav delete-char        emacs,viins       '^[[3;2~'
+  _zsc_bind_nav vi-delete-char     vicmd             '^[[3;2~'
+  _zsc_bind_nav kill-word          emacs,viins,vicmd '^[[3;5~'
+  _zsc_bind_nav backward-kill-word emacs,viins,vicmd '^[[3;3~'
   unset -f _zsc_bind_nav
 
   unset _zsc_prefix_ok _zsc_dir _zsc_keymap
