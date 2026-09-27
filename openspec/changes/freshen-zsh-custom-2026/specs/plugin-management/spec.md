@@ -58,3 +58,23 @@ The framework SHALL avoid re-resolving the full plugin set on every shell start 
 #### Scenario: Refresh after change
 - **WHEN** the user changes a plugin list and runs the refresh command
 - **THEN** subsequent shells load the updated set
+
+### Requirement: Interactive completion menu
+The completion system SHALL present a selectable menu when the user requests completion repeatedly, SHALL allow moving the selection with the arrow keys, and SHALL highlight the selected candidate. The candidate list SHALL be colorized.
+
+#### Scenario: Repeated completion opens a menu
+- **WHEN** the user presses Tab to complete an ambiguous word
+- **THEN** the candidates are listed
+- **WHEN** the user presses Tab again
+- **THEN** a selection menu is shown with a candidate highlighted
+
+#### Scenario: Arrow keys move the selection
+- **WHEN** the completion menu is open and the user presses an arrow key
+- **THEN** the highlighted candidate changes
+- **AND** the command is not executed until the user accepts or dismisses the menu
+
+#### Scenario: Menu styles match the previous configuration
+- **WHEN** a shell starts with the framework defaults
+- **THEN** the `zsh/complist` module is loaded
+- **AND** the `menu` style is set to `select` for completion contexts
+- **AND** the completion list is colorized
