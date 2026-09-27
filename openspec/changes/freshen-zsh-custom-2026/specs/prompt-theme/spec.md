@@ -50,12 +50,16 @@ Users SHALL be able to override prompt configuration from the user customization
 - **AND** updating the framework does not replace it
 
 ### Requirement: Prompt colors and spacing
-The prompt SHALL render the host, time, runtime, and git elements in the terminal's default foreground color so they stay readable on both light and dark backgrounds. The host name SHALL be colored only for remote (SSH) sessions. The prompt SHALL emit exactly one space after the prompt character.
+The prompt SHALL render the host, time, runtime, and git branch name in the terminal's default foreground color so they stay readable on both light and dark backgrounds. Git status indicators SHALL be color-coded by state. The host name SHALL be colored only for remote (SSH) sessions. The prompt SHALL emit exactly one space after the prompt character.
 
 #### Scenario: Local session uses the default foreground
 - **WHEN** the shell runs in a local (non-SSH) session
-- **THEN** the host, time, node, and git elements are shown in the terminal's default foreground color
+- **THEN** the host, time, node, and git branch name are shown in the terminal's default foreground color
 - **AND** the host name is not colored
+
+#### Scenario: Git status indicators are color-coded
+- **WHEN** the working tree has staged, modified, and untracked changes
+- **THEN** each indicator is drawn in a distinct color for its state
 
 #### Scenario: Remote session colors the host
 - **WHEN** the shell runs over SSH

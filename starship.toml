@@ -72,11 +72,12 @@ format = "[$symbol$output]($style) "
 [git_branch]
 symbol = "±"
 style = "none"
-format = "\\[[$symbol$branch]($style) "
+format = "\\[[$symbol](bold green)[$branch]($style) "
 
+# Colour each indicator by state, as the previous theme did.
 [git_status]
 style = "none"
-format = "[$all_status$ahead_behind]($style)\\] "
+format = "[$staged](bold green)[$modified](bold yellow)[$untracked](bold red)[$deleted](bold red)[$renamed](bold blue)[$typechanged](bold blue)[$conflicted](bold red)[$stashed](bold magenta)[$ahead_behind](bold cyan)[$up_to_date](bold green)\\] "
 stashed = "≡"
 ahead = "▴"
 behind = "▾"

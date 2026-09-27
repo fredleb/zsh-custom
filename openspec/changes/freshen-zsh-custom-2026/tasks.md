@@ -38,7 +38,8 @@
 - [x] 5.3 Configure a readable no-Nerd-Font fallback and document the font requirement; verify the prompt renders readably with icons disabled.
 - [x] 5.4 Remove the custom theme file and its references; verify no file references `themes/fidji.zsh-theme`.
 - [x] 5.5 Allow prompt config override from the user layer; verify a user override wins over the default.
-- [x] 5.6 Fix prompt color and spacing regressions: host, time, runtime, and git use the terminal default foreground; the host is blue only for remote sessions; the double space after the prompt character is removed.
+- [x] 5.6 Fix prompt color and spacing regressions: host, time, runtime, and git branch use the terminal default foreground; the host is blue only for remote sessions; the double space after the prompt character is removed.
+- [x] 5.7 Colour the git status indicators by state (staged, modified, untracked, ahead/behind) as the previous theme did.
 
 ## 6. User customization layer
 
@@ -59,6 +60,6 @@
 
 ## 9. Release and documentation
 
-- [ ] 9.1 Rewrite the README (install, upgrade, customize, secrets, uninstall, supported platforms, version pinning); verify a fresh user can follow it end to end. (Reopened: the upgrade instructions were incorrect — missing PATH context, a non-existent example version, and no pre-v2 upgrade path. Fixed on `docs/fix-readme-install-upgrade`.)
+- [x] 9.1 Rewrite the README (install, upgrade, customize, secrets, uninstall, supported platforms, version pinning); verify a fresh user can follow it end to end. (Was reopened for incorrect upgrade instructions; corrected and released in v2.0.1.)
 - [x] 9.2 Add `CHANGELOG.md` and release `v2.0.0` with breaking-change and migration notes; verify the tag exists and the changelog documents the one-time migration.
 - [x] 9.3 Verify rollback by checking out the previous tag and confirming the shell starts without changing `~/.zshrc`.
