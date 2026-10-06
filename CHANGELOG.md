@@ -4,6 +4,15 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.0] - 2026-10-06
+
+### Changed
+- The shell now uses the emacs key map for its line editor whatever `$EDITOR`
+  is. Previously, with `EDITOR=vim`, zsh silently used the vi key map, which
+  dropped the emacs control keys: Ctrl-R history search did nothing and
+  Ctrl-A/Ctrl-E/Ctrl-P/Ctrl-N were unbound. Set `bindkey -v` in
+  `~/.config/zsh/local.zsh` to return to vi modal editing.
+
 ## [3.4.1] - 2026-09-27
 
 ### Changed

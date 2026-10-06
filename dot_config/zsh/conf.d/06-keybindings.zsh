@@ -17,6 +17,13 @@
 # Override any of this in ~/.config/zsh/local.zsh (sourced last).
 
 if [[ -o interactive ]]; then
+  # Use the emacs key map whichever editor is configured. zsh otherwise picks
+  # the vi key map when $EDITOR/$VISUAL contains "vi", which drops the emacs
+  # control keys (Ctrl-R history search, Ctrl-A/Ctrl-E, Ctrl-P/Ctrl-N, ...).
+  # A user who wants vi modal editing can run `bindkey -v` in
+  # ~/.config/zsh/local.zsh (sourced last).
+  bindkey -e
+
   # The widgets live in zsh's Zle function directory. `zle -N` does not verify
   # that the function exists (it succeeds for any name), so autoloading a
   # missing widget would fail only when the key is pressed. Verify the files are
