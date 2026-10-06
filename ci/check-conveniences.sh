@@ -55,7 +55,7 @@ else
     fail "chezmoi apply failed in the sandbox"
   else
     out="$(
-      TERM=xterm zsh -i -c '
+      EDITOR=vim TERM=xterm zsh -i -c '
         for a in l ll la lsa; do
           [[ -n ${aliases[$a]} ]] || print -r -- "missing alias: $a"
         done
@@ -99,6 +99,11 @@ else
           nav_check $km "^[[3;5~" kill-word
           nav_check $km "^[[3;3~" backward-kill-word
         done
+
+        # The line editor uses the emacs key map even when $EDITOR contains vi.
+        [[ $(bindkey -lL main) == "bindkey -A emacs main" ]] || print -r -- "line editor is not the emacs key map ($(bindkey -lL main))"
+        [[ $(bindkey "^R") == *history-incremental-search-backward* ]] || print -r -- "Ctrl-R is not incremental history search"
+        [[ $(bindkey "^A") == *beginning-of-line* ]] || print -r -- "Ctrl-A is not beginning-of-line"
       ' 2>/dev/null
     )"
     if [[ -n "$out" ]]; then
