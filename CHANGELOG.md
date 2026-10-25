@@ -4,6 +4,31 @@ All notable changes to this project are documented here.
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning: [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2026-10-25
+
+### Added
+- Directory listings are colourised again, at an interactive terminal only:
+  `ls`, `l`, `ll`, `la`, and `lsa` render names in colour, while piped or
+  redirected output stays plain. The colour layer is upstream-maintained
+  (`ohmyzsh/ohmyzsh lib/theme-and-appearance.zsh`), uses GNU `LS_COLORS` on
+  Linux and `LSCOLORS` on macOS, and adds no system dependency.
+- The library's probe results are cached in
+  `~/.cache/zsh/appearance-probes` (`ZSH_CACHE_DIR`), so restoring colour costs
+  no measurable startup time.
+
+### Changed
+- On GNU systems the same library wraps `diff` so it colourises its output.
+  BSD `diff` has no `--color`, so macOS is unaffected.
+- CI now fails if listing colour disappears, on both the Linux and macOS
+  install legs.
+
+### Notes
+- `grep`/`egrep`/`fgrep`, `ip`, `man`, `less`, and `systemctl` colouring is not
+  included.
+- Turn listing colour off from `~/.config/zsh/local.zsh` with `unalias ls`.
+  Upstream's `DISABLE_LS_COLORS` only applies when it is set before zsh starts
+  its configuration.
+
 ## [3.5.0] - 2026-10-06
 
 ### Changed

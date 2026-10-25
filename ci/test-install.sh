@@ -68,6 +68,15 @@ fi
 # The promised shell conveniences are present.
 zsh -i -c '
   for a in l ll la lsa; do [[ -n ${aliases[$a]} ]] || { print -r -- "missing alias: $a" >&2; exit 1; }; done
+  [[ -n ${aliases[ls]} ]] || { print -r -- "missing alias: ls" >&2; exit 1; }
+  if [[ ${aliases[ls]:-} != *--color* && ${aliases[ls]:-} != *-G* ]]; then
+    print -r -- "ls is not colourised: ${aliases[ls]:-<none>}" >&2; exit 1
+  fi
+  if [[ $OSTYPE == darwin* ]]; then
+    [[ -n $LSCOLORS ]] || { print -r -- "LSCOLORS is empty (no BSD listing palette)" >&2; exit 1; }
+  else
+    [[ -n $LS_COLORS ]] || { print -r -- "LS_COLORS is empty (no GNU listing palette)" >&2; exit 1; }
+  fi
   [[ $options[AUTO_CD] == on ]]           || { print -r -- "AUTO_CD is not on" >&2; exit 1; }
   [[ $options[HIST_IGNORE_SPACE] == on ]] || { print -r -- "HIST_IGNORE_SPACE is not on" >&2; exit 1; }
   [[ -n $HISTFILE ]]                      || { print -r -- "HISTFILE is empty" >&2; exit 1; }

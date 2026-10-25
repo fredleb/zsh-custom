@@ -100,8 +100,10 @@ applies even when Homebrew coreutils are installed, because upstream's default
 is "native `ls` first".
 
 - Rationale: cheapest, and matches upstream. A user who wants GNU colours on
-  macOS can opt in with `zstyle ':omz:lib:theme-and-appearance' gnu-ls true` in
-  `~/.config/zsh/local.zsh`; that is the user layer's job, not the framework's.
+  macOS can opt in by aliasing `ls` to `gls --color=tty` in
+  `~/.config/zsh/local.zsh`. Upstream's `gnu-ls` zstyle would be the natural
+  switch, but `theme-and-appearance.zsh` reads it while loading, before the
+  user layer is sourced, so setting it there has no effect.
 - Alternative: set that zstyle by default (rejected — it would need `gls` to be
   installed to have any effect, so it would be a no-op on stock macOS and a
   hidden dependency where it is not).

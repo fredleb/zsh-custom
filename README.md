@@ -91,14 +91,15 @@ echo 'export GITEA_TOKEN="..."' >> ~/.config/zsh/secrets.zsh
 ## Shell conveniences
 
 The default configuration provides these out of the box. Most come from
-upstream oh-my-zsh library files loaded through antidote (`lib/directories.zsh`
-and `lib/history.zsh`); prefix history search and the terminal navigation keys
-use zsh's own built-in line-editor widgets. All track upstream rather than being
-hand-maintained here.
+upstream oh-my-zsh library files loaded through antidote (`lib/directories.zsh`,
+`lib/history.zsh`, and `lib/theme-and-appearance.zsh`); prefix history search
+and the terminal navigation keys use zsh's own built-in line-editor widgets. All
+track upstream rather than being hand-maintained here.
 
 | Convenience | Source |
 |---|---|
 | `l`, `ll`, `la`, `lsa` — list directory contents | `lib/directories.zsh` |
+| Colourised listings whenever output is a terminal | `lib/theme-and-appearance.zsh` |
 | `..` — change to the parent directory | `lib/directories.zsh` (via `auto_cd`) |
 | `md`, `rd`, `-`, `1`–`9`, `d`, `...` | `lib/directories.zsh` |
 | Up/Down recall history, shared across shells | `lib/history.zsh` |
@@ -108,12 +109,21 @@ hand-maintained here.
 | Ctrl-R searches history; emacs editing keys work whatever `$EDITOR` is | zsh built-in widgets |
 | A command line starting with a space is not recorded | `lib/history.zsh` |
 
+Listing colour uses each platform's native mechanism, so the palettes differ:
+GNU `ls --color=tty` with `LS_COLORS` on Linux, and `ls -G` with `LSCOLORS` on
+macOS. Piped or redirected output is always plain. On GNU systems the same
+library also wraps `diff` so it colourises its output.
+
 To override any of these, edit `~/.config/zsh/local.zsh` (sourced last), for
 example:
 
 ```sh
 # Use different listing flags
 alias l='ls -lFh'
+# Turn listing colour off (l, ll, la, lsa all chain through ls)
+unalias ls
+# macOS with Homebrew coreutils: use the GNU palette instead of the BSD one
+alias ls='gls --color=tty'
 # Do not change directory when a bare directory name is typed
 unsetopt auto_cd
 # Record space-prefixed commands after all
@@ -121,6 +131,11 @@ unsetopt hist_ignore_space
 # Use vi key bindings in the shell instead of the default emacs bindings
 bindkey -v
 ```
+
+Because this file is sourced last, overrides have to redefine the alias rather
+than set a switch the library reads while loading. Upstream's
+`DISABLE_LS_COLORS=true` therefore only takes effect when it is set before zsh
+starts its configuration, for example in your login environment.
 
 ## Release policy
 

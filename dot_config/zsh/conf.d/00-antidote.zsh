@@ -64,6 +64,13 @@ else
 fi
 unset _zsc_antidote
 
+# oh-my-zsh's library files read $ZSH_CACHE_DIR to locate their cache files
+# (the appearance probes and the grep alias cache). It is normally set by
+# oh-my-zsh's own entrypoint, which this configuration deliberately bypasses.
+# Without it the path is empty, every cache write is skipped, and the library
+# re-probes on every shell start.
+ZSH_CACHE_DIR="$ZSH_CACHE"
+
 # Stage 1: completions + autosuggestions (before compinit).
 zshrc_antidote_bundle_load "$ZSH_CONFIG/plugins.txt"
 
