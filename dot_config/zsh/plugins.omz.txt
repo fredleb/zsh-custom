@@ -1,6 +1,10 @@
-# Stage 2 (loaded after compinit, because directories.zsh calls compdef at
-# source time). Upstream-maintained oh-my-zsh library files that provide the
-# shell conveniences the framework promises: directory listing and navigation
-# aliases, and interactive command history.
+# Stage 2: upstream-maintained oh-my-zsh library files that provide the shell
+# conveniences and appearance the framework promises — directory listing and
+# navigation aliases, interactive command history, and listing colours.
+#
+# Loaded after compinit because directories.zsh calls compdef at source time.
+# theme-and-appearance.zsh needs no compdef, but belongs in this upstream
+# library stage rather than in a hand-written fragment.
 ohmyzsh/ohmyzsh path:lib/directories.zsh
 ohmyzsh/ohmyzsh path:lib/history.zsh
+ohmyzsh/ohmyzsh path:lib/theme-and-appearance.zsh

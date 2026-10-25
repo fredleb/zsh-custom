@@ -3,8 +3,8 @@
 #
 # The conveniences come from upstream oh-my-zsh library files loaded through
 # antidote. A regression here is silent (the shell still starts), so it is
-# asserted explicitly against a real install: listing aliases, and the options
-# that the loader's `emulate -L zsh` scope used to discard.
+# asserted explicitly against a real install: listing aliases, listing colour,
+# and the options that the loader's `emulate -L zsh` scope used to discard.
 #
 # Requires chezmoi and a populated antidote cache (or network). When either is
 # unavailable the runtime part is skipped and only the static checks run.
@@ -23,6 +23,9 @@ if ! grep -rqs 'lib/directories\.zsh' "$root"/dot_config/zsh/plugins*.txt; then
 fi
 if ! grep -rqs 'lib/history\.zsh' "$root"/dot_config/zsh/plugins*.txt; then
   fail "lib/history.zsh is not declared in any plugin list"
+fi
+if ! grep -rqs 'lib/theme-and-appearance\.zsh' "$root"/dot_config/zsh/plugins*.txt; then
+  fail "lib/theme-and-appearance.zsh is not declared in any plugin list (listing colour is gone)"
 fi
 if [[ ! -r "$root/dot_config/zsh/conf.d/06-keybindings.zsh" ]]; then
   fail "conf.d/06-keybindings.zsh is missing"
@@ -59,6 +62,20 @@ else
         for a in l ll la lsa; do
           [[ -n ${aliases[$a]} ]] || print -r -- "missing alias: $a"
         done
+
+        # Listing colour: the ls alias must carry the platform colour flag and
+        # the matching palette variable must be populated. No tty is needed to
+        # assert this, which is why it works in CI.
+        [[ -n ${aliases[ls]} ]] || print -r -- "missing alias: ls"
+        if [[ ${aliases[ls]:-} != *--color* && ${aliases[ls]:-} != *-G* ]]; then
+          print -r -- "ls is not colourised: ${aliases[ls]:-<none>}"
+        fi
+        if [[ $OSTYPE == darwin* ]]; then
+          [[ -n $LSCOLORS ]] || print -r -- "LSCOLORS is empty (no BSD listing palette)"
+        else
+          [[ -n $LS_COLORS ]] || print -r -- "LS_COLORS is empty (no GNU listing palette)"
+        fi
+
         [[ $options[AUTO_CD] == on ]]           || print -r -- "AUTO_CD is not on"
         [[ $options[HIST_IGNORE_SPACE] == on ]] || print -r -- "HIST_IGNORE_SPACE is not on"
         [[ -n $HISTFILE ]]                      || print -r -- "HISTFILE is empty"
