@@ -125,6 +125,11 @@ macOS) is non-empty. Also add the static check that
 - The assertions must not require a tty, so they check the alias and the
   variables rather than inspecting rendered bytes. A rendered-bytes check
   belongs to the implementation tasks, run under `script` for a pty.
+- Both invocations must set `TERM`, because `dircolors` filters its database by
+  `$TERM`: with `TERM` unset (as in a CI step) Debian and Ubuntu emit an empty
+  `LS_COLORS`, while a real terminal always has it set. CI caught exactly this
+  on the first run; `check-conveniences.sh` already passed `TERM=xterm`, and
+  `test-install.sh` now does too.
 
 ## Risks / Trade-offs
 

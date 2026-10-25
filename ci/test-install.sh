@@ -66,7 +66,10 @@ if grep -qE 'plugin unavailable|could not resolve all plugins' <<<"$out"; then
 fi
 
 # The promised shell conveniences are present.
-zsh -i -c '
+# TERM matters: dircolors filters its database by $TERM, so with TERM unset
+# (as it is in CI) Debian/Ubuntu export an empty LS_COLORS and the colour
+# assertion below would fail even though a real terminal is coloured.
+EDITOR=vim TERM=xterm zsh -i -c '
   for a in l ll la lsa; do [[ -n ${aliases[$a]} ]] || { print -r -- "missing alias: $a" >&2; exit 1; }; done
   [[ -n ${aliases[ls]} ]] || { print -r -- "missing alias: ls" >&2; exit 1; }
   if [[ ${aliases[ls]:-} != *--color* && ${aliases[ls]:-} != *-G* ]]; then

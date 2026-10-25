@@ -14,7 +14,7 @@
 ## 3. CI
 
 - [x] 3.1 Add the static assertion to `ci/check-conveniences.sh` that `lib/theme-and-appearance.zsh` is declared in a plugin list, and add the portable runtime assertion (alias matches `--color` or `-G`; `LS_COLORS` on Linux / `LSCOLORS` on macOS is non-empty). Verify `bash ci/check-conveniences.sh` prints `check-conveniences: ok`.
-- [x] 3.2 Add the same portable assertion to the convenience block in `ci/test-install.sh` so the `macos-latest` matrix leg covers it. Verify `bash ci/test-install.sh` passes locally.
+- [x] 3.2 Add the same portable assertion to the convenience block in `ci/test-install.sh` so the `macos-latest` matrix leg covers it. Set `TERM=xterm` for the invocation: `dircolors` filters its database by `$TERM`, so an unset `TERM` leaves `LS_COLORS` empty on Debian/Ubuntu. Verify `bash ci/test-install.sh` passes locally.
 - [x] 3.3 Negative test: temporarily remove the `theme-and-appearance` line and confirm `bash ci/check-conveniences.sh` fails with a message naming the missing colour layer, then restore it.
 
 ## 4. Documentation and release
